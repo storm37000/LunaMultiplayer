@@ -55,7 +55,12 @@ Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
 ---
 ### Troubleshooting:
 
-Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Troubleshooting) in the wiki to solve the most common issues with LMP 
+Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Troubleshooting) in the wiki to solve the most common issues with LMP
+
+---
+### Servers:
+
+You can check [how many servers are up](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server-status) and running either in [Release](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-get-the-latest-version-of-LMP) or in [Nightly](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-get-nightly-builds) versions through our [master servers](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server)
 
 ---
 ### Contributing:
@@ -67,23 +72,3 @@ Please write the code as you were going to leave it, return after 1 year and you
 It's **very** important that the code is clean and documented so in case someone leaves, another programmer could take and maintain it. Bear in mind that **nobody** likes to take a project where it's code looks like a dumpster.
 
 There's also a test project in case you want to add tests to your code.
-
----
-### Servers:
-
-You can check [how many servers are up](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server-status) and running either in [Release](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-get-the-latest-version-of-LMP) or in [Nightly](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-get-nightly-builds) versions through our [master servers](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server)
-
-<!--[Dagger](https://github.com/gavazquez) | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/servers.lunamultiplayer.com:8701.svg?label=status)](http://servers.lunamultiplayer.com:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/servers.lunamultiplayer.com:8751.svg?label=status)](http://servers.lunamultiplayer.com:8751) |--->
-
-<!--[PictoCube](https://github.com/Alfred-PictoCube) | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/masterserver.pictocube.fr:8701.svg?label=status)](http://masterserver.pictocube.fr:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/masterserver.pictocube.fr:8711.svg?label=status)](http://masterserver.pictocube.fr:8711) |--->
-| Master server | Release | Nightly |
-| ------------  | ------- |-------- |
-Tekbot | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/212.48.114.221:8701.svg?label=status)](http://212.48.114.221:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/212.48.114.221:8751.svg?label=status)](http://212.48.114.221:8751) |
-[Angryjoshi](https://github.com/Angryjoshi) | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/lmp.anschuetznet.de:8701.svg?label=status)](http://lmp.anschuetznet.de:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/lmp.anschuetznet.de:8751.svg?label=status)](http://lmp.anschuetznet.de:8751) |
-Piro | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/178.33.167.161:8701.svg?label=status)](http://178.33.167.161:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/178.33.167.161:8751.svg?label=status)](http://178.33.167.161:8751) |
----
-
-<p align="center">
-  <a href="mailto:gavazquez@gmail.com"><img src="https://img.shields.io/badge/email-gavazquez@gmail.com-blue.svg?style=flat" alt="Email: gavazquez@gmail.com" /></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/github/license/lunamultiplayer/LunaMultiPlayer.svg" alt="License" /></a>
-</p>
