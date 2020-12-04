@@ -2,14 +2,13 @@
 using LmpCommon.Message.Interface;
 using LmpCommon.Message.Types;
 using Server.Client;
-using Server.Message.Base;
 using Server.System;
 
 namespace Server.Message
 {
-    public class ScenarioDataMsgReader : ReaderBase
+    public class ScenarioDataMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var messageData = message.Data as ScenarioBaseMsgData;
             switch (messageData?.ScenarioMessageType)

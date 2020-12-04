@@ -13,8 +13,6 @@ namespace LmpCommon.Xml
 
         public static T ReadXmlFromPath<T>(string path) where T : class, new()
         {
-            if (!File.Exists(path))
-                return null;
             try
             {
                 using (TextReader r = new StreamReader(path))
@@ -51,8 +49,6 @@ namespace LmpCommon.Xml
 
         public static object ReadXmlFromPath(Type classType, string path)
         {
-            if (!File.Exists(path))
-                return null;
             try
             {
                 using (TextReader r = new StreamReader(path))

@@ -35,10 +35,10 @@ namespace Server.Plugin
 
         public static void LoadPlugins()
         {
-            var pluginDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
+            var pluginDirectory = Path.Combine(MainServer.startdir, "Plugins");
             if (!FileHandler.FolderExists(pluginDirectory))
                 FileHandler.FolderCreate(pluginDirectory);
-            LunaLog.Debug("Loading plugins...");
+            LunaLog.Normal("Loading plugins...");
 
             //Load all the assemblies just in case they depend on each other during instantation
             var loadedAssemblies = new List<Assembly>();
@@ -52,16 +52,16 @@ namespace Server.Plugin
                     //See http://stackoverflow.com/a/15238782
                     var loadedAssembly = Assembly.UnsafeLoadFrom(pluginFile);
                     loadedAssemblies.Add(loadedAssembly);
-                    LunaLog.Debug($"Loaded {pluginFile}");
+                    LunaLog.Normal($"Loaded {pluginFile}");
                 }
                 catch (NotSupportedException)
                 {
                     //This should only occur if using Assembly.LoadFrom() above instead of Assembly.UnsafeLoadFrom()
-                    LunaLog.Debug($"Can't load dll, perhaps it is blocked: {pluginFile}");
+                    LunaLog.Error($"Can't load dll, perhaps it is blocked: {pluginFile}");
                 }
                 catch
                 {
-                    LunaLog.Debug($"Error loading {pluginFile}");
+                    LunaLog.Error($"Error loading {pluginFile}");
                 }
             }
 
@@ -70,13 +70,13 @@ namespace Server.Plugin
             {
                 foreach (var loadedType in loadedAssembly.GetExportedTypes().Where(t => t.GetInterfaces().Any(i => i == typeof(ILmpPlugin))))
                 {
-                    LunaLog.Debug($"Loading plugin: {loadedType.FullName}");
+                    LunaLog.Normal($"Loading plugin: {loadedType.FullName}");
                     try
                     {
                         var pluginInstance = ActivatePluginType(loadedType);
                         if (pluginInstance != null)
                         {
-                            LunaLog.Debug($"Loaded plugin: {loadedType.FullName}");
+                            LunaLog.Normal($"Loaded plugin: {loadedType.FullName}");
                             lock (ListLock)
                             {
                                 LoadedPlugins.Add(pluginInstance);
@@ -88,7 +88,6 @@ namespace Server.Plugin
                         LunaLog.Error($"Error loading plugin {loadedType.FullName}({loadedType.Assembly.FullName}) Exception: {ex}");
                     }
                 }
-                LunaLog.Debug("Done!");
             }
         }
 
@@ -107,27 +106,6 @@ namespace Server.Plugin
             }
         }
 
-        //Fire OnUpdate
-        public static void FireOnUpdate()
-        {
-            lock (ListLock)
-            {
-                foreach (var plugin in LoadedPlugins)
-                {
-                    try
-                    {
-                        plugin.OnUpdate();
-                    }
-                    catch (Exception e)
-                    {
-                        var type = plugin.GetType();
-                        LunaLog.Debug($"Error thrown in OnUpdate event for {type.FullName} " +
-                                      $"({type.Assembly.FullName}), Exception: {e}");
-                    }
-                }
-            }
-        }
-
         //Fire OnServerStart
         public static void FireOnServerStart()
         {
@@ -142,7 +120,7 @@ namespace Server.Plugin
                     catch (Exception e)
                     {
                         var type = plugin.GetType();
-                        LunaLog.Debug($"Error thrown in OnServerStart event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
+                        LunaLog.Error($"Error thrown in OnServerStart event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
                     }
                 }
             }
@@ -162,7 +140,7 @@ namespace Server.Plugin
                     catch (Exception e)
                     {
                         var type = plugin.GetType();
-                        LunaLog.Debug($"Error thrown in OnServerStop event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
+                        LunaLog.Error($"Error thrown in OnServerStop event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
                     }
                 }
             }
@@ -182,7 +160,7 @@ namespace Server.Plugin
                     catch (Exception e)
                     {
                         var type = plugin.GetType();
-                        LunaLog.Debug($"Error thrown in OnClientConnect event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
+                        LunaLog.Error($"Error thrown in OnClientConnect event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
                     }
                 }
             }
@@ -202,7 +180,7 @@ namespace Server.Plugin
                     catch (Exception e)
                     {
                         var type = plugin.GetType();
-                        LunaLog.Debug($"Error thrown in OnClientAuthenticated event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
+                        LunaLog.Error($"Error thrown in OnClientAuthenticated event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
                     }
                 }
             }
@@ -222,7 +200,7 @@ namespace Server.Plugin
                     catch (Exception e)
                     {
                         var type = plugin.GetType();
-                        LunaLog.Debug($"Error thrown in OnClientDisconnect event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
+                        LunaLog.Error($"Error thrown in OnClientDisconnect event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
                     }
                 }
             }
@@ -247,7 +225,7 @@ namespace Server.Plugin
                     catch (Exception e)
                     {
                         var type = plugin.GetType();
-                        LunaLog.Debug($"Error thrown in OnMessageReceived event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
+                        LunaLog.Error($"Error thrown in OnMessageReceived event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
                     }
                     message.Handled = handledByAny;
                 }
@@ -268,7 +246,7 @@ namespace Server.Plugin
                     catch (Exception e)
                     {
                         var type = plugin.GetType();
-                        LunaLog.Debug($"Error thrown in OnMessageSent event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
+                        LunaLog.Error($"Error thrown in OnMessageSent event for {type.FullName} ({type.Assembly.FullName}), Exception: {e}");
                     }
                 }
             }

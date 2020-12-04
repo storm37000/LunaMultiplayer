@@ -5,14 +5,13 @@ using LmpCommon.Message.Server;
 using LmpCommon.Message.Types;
 using Server.Client;
 using Server.Context;
-using Server.Message.Base;
 using Server.Server;
 
 namespace Server.Message
 {
-    public class PlayerStatusMsgReader : ReaderBase
+    public class PlayerStatusMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var messageData = message.Data as PlayerStatusBaseMsgData;
             switch (messageData?.PlayerStatusMessageType)

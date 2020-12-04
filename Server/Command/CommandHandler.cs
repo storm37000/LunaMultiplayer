@@ -61,9 +61,6 @@ namespace Server.Command
                             Commands["say"].Func(input);
                         }
                     }
-
-                    //We only accept a command once every 500ms
-                    await Task.Delay(500);
                 }
             }
             catch (Exception e)

@@ -5,12 +5,8 @@ using LmpCommon.Message.Interface;
 using Server.Context;
 using Server.Plugin;
 using Server.Server;
-using Server.Settings.Structures;
 using System;
-using System.Collections.Concurrent;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Server.Client
 {
@@ -22,8 +18,8 @@ namespace Server.Client
 
         public bool Authenticated { get; set; }
 
-        public long BytesReceived { get; set; }
-        public long BytesSent { get; set; }
+        public ulong BytesReceived { get; set; }
+        public ulong BytesSent { get; set; }
         public NetConnection Connection { get; }
 
         public ConnectionStatus ConnectionStatus { get; set; } = ConnectionStatus.Connected;
@@ -33,16 +29,12 @@ namespace Server.Client
         public float[] PlayerColor { get; set; } = new float[3];
         public string PlayerName { get; set; } = "Unknown";
         public PlayerStatus PlayerStatus { get; set; } = new PlayerStatus();
-        public ConcurrentQueue<IServerMessageBase> SendMessageQueue { get; } = new ConcurrentQueue<IServerMessageBase>();
         public int Subspace { get; set; } = int.MinValue; //Leave it as min value. When client connect we force them client side to go to latest subspace
         public float SubspaceRate { get; set; } = 1f;
-
-        public Task SendThread { get; }
 
         public ClientStructure(NetConnection playerConnection)
         {
             Connection = playerConnection;
-            SendThread = MainServer.LongRunTaskFactory.StartNew(() => SendMessagesThread(MainServer.CancellationTokenSrc.Token), MainServer.CancellationTokenSrc.Token);
         }
 
         public override bool Equals(object obj)
@@ -56,33 +48,19 @@ namespace Server.Client
             return Endpoint?.GetHashCode() ?? 0;
         }
 
-        private async void SendMessagesThread(CancellationToken token)
+        public void SendMessage(IServerMessageBase msg)
         {
-            while (ConnectionStatus == ConnectionStatus.Connected)
+            try
             {
-                while (SendMessageQueue.TryDequeue(out var message) && message != null)
-                {
-                    try
-                    {
-                        LidgrenServer.SendMessageToClient(this, message);
-                    }
-                    catch (Exception e)
-                    {
-                        ClientException.HandleDisconnectException("Send network message error: ", this, e);
-                        return;
-                    }
-
-                    LmpPluginHandler.FireOnMessageSent(this, message);
-                }
-                try
-                {
-                    await Task.Delay(IntervalSettings.SettingsStore.SendReceiveThreadTickMs, token);
-                }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
+                LidgrenServer.SendMessageToClient(this, msg);
             }
+            catch (Exception e)
+            {
+                ClientException.HandleDisconnectException("Send network message error: ", this, e);
+                return;
+            }
+
+            LmpPluginHandler.FireOnMessageSent(this, msg);
         }
     }
 }

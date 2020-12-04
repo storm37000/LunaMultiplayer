@@ -1,5 +1,6 @@
 ﻿using LmpCommon;
 using LmpCommon.Enums;
+using Server.Context;
 using Server.Settings.Structures;
 using Server.System;
 using System;
@@ -11,25 +12,38 @@ namespace Server.Log
     {
         private static readonly BaseLogger Singleton = new LunaLog();
 
-        static LunaLog()
-        {
-            if (!FileHandler.FolderExists(LogFolder))
-                FileHandler.FolderCreate(LogFolder);
-        }
+        private static string logbuff = string.Empty;
 
-        public static string LogFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+        public static string LogFolder = Path.Combine(MainServer.startdir, "logs");
 
         public static string LogFilename = Path.Combine(LogFolder, $"lmpserver_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log");
 
         #region Overrides
 
         protected override LogLevels LogLevel => LogSettings.SettingsStore.LogLevel;
-        protected override bool UseUtcTime => true;
+        protected override bool UseUtcTime => LogSettings.SettingsStore.UseUtcTimeInLog;
+
+        private static void writeLogFile(string LogFilename, string data)
+        {
+            if (!FileHandler.FolderExists(LogFolder))
+            {
+                FileHandler.FolderCreate(LogFolder);
+            }
+            FileHandler.AppendToFile(LogFilename, data);
+        }
 
         protected override void AfterPrint(string line)
         {
-            base.AfterPrint(line);
-            FileHandler.AppendToFile(LogFilename, line + Environment.NewLine);
+            if (!ServerContext.ConfigsLoaded)
+            {
+                logbuff += (line + Environment.NewLine);
+                return;
+            }else if (logbuff != string.Empty)
+            {
+                if (LogSettings.SettingsStore.EnableLogging) { writeLogFile(LogFilename, logbuff); }
+                logbuff = string.Empty;
+            }
+            if (LogSettings.SettingsStore.EnableLogging) { writeLogFile(LogFilename, line + Environment.NewLine); }
         }
 
         #endregion

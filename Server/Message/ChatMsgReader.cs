@@ -3,14 +3,13 @@ using LmpCommon.Message.Interface;
 using LmpCommon.Message.Server;
 using Server.Client;
 using Server.Log;
-using Server.Message.Base;
 using Server.Server;
 
 namespace Server.Message
 {
-    public class ChatMsgReader : ReaderBase
+    public class ChatMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var messageData = (ChatMsgData)message.Data;
             if (messageData.From != client.PlayerName) return;

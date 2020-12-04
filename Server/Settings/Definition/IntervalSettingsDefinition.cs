@@ -17,9 +17,6 @@ namespace Server.Settings.Definition
         [XmlComment(Value = "Send/Receive tick clock. Keep this value low but at least above 2ms to avoid extreme CPU usage.")]
         public int SendReceiveThreadTickMs { get; set; } = 5;
 
-        [XmlComment(Value = "Main thread polling in ms. Keep this value low but at least above 2ms to avoid extreme CPU usage.")]
-        public int MainTimeTick { get; set; } = 5;
-
         [XmlComment(Value = "Interval in ms at which internal LMP structures (Subspaces, Vessels, Scenario files, ...) will be backed up to a file")]
         public int BackupIntervalMs { get; set; } = 30000;
 

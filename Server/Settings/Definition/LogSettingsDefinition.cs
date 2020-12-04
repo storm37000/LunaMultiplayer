@@ -7,6 +7,9 @@ namespace Server.Settings.Definition
     [Serializable]
     public class LogSettingsDefinition
     {
+        [XmlComment(Value = "Enable Logging System")]
+        public bool EnableLogging { get; set; } = true;
+
         [XmlComment(Value = "Minimum log level. Values: Normal, Debug, NetworkDebug, VerboseNetworkDebug")]
         public LogLevels LogLevel { get; set; } = LogLevels.Debug;
 

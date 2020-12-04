@@ -2,14 +2,13 @@
 using LmpCommon.Message.Interface;
 using LmpCommon.Message.Types;
 using Server.Client;
-using Server.Message.Base;
 using Server.System;
 
 namespace Server.Message
 {
-    public class ShareProgressMsgReader : ReaderBase
+    public class ShareProgressMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var data = (ShareProgressBaseMsgData)message.Data;
             switch (data.ShareProgressMessageType)

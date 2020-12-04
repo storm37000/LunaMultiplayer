@@ -5,10 +5,6 @@ namespace Server.Plugin
 {
     public abstract class LmpPlugin : ILmpPlugin
     {
-        public virtual void OnUpdate()
-        {
-        }
-
         public virtual void OnServerStart()
         {
         }

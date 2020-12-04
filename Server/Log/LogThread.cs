@@ -1,4 +1,5 @@
 ﻿using LmpCommon.Time;
+using Server.Settings.Structures;
 using Server.Context;
 using System.IO;
 using System.Threading.Tasks;
@@ -12,28 +13,34 @@ namespace Server.Log
 
         public static async void RunLogThread()
         {
-            while (ServerContext.ServerRunning)
+            if (LogSettings.SettingsStore.ExpireLogs > 0 && LogSettings.SettingsStore.EnableLogging)
             {
-                //Run the log expire function every 10 minutes
-                if (ServerContext.ServerClock.ElapsedMilliseconds - _lastLogExpiredCheck > 600000)
-                {
-                    _lastLogExpiredCheck = ServerContext.ServerClock.ElapsedMilliseconds;
-                    LogExpire.ExpireLogs();
-                }
+                //Set day for log change
+                ServerContext.Day = (byte)LunaNetworkTime.Now.Day;
 
-                // Check if the day has changed, every minute
-                if (ServerContext.ServerClock.ElapsedMilliseconds - _lastDayCheck > 60000)
+                while (ServerContext.ServerRunning)
                 {
-                    _lastDayCheck = ServerContext.ServerClock.ElapsedMilliseconds;
-                    if (ServerContext.Day != LunaNetworkTime.Now.Day)
+                    //Run the log expire function every 10 minutes
+                    if (ServerContext.ServerClock.ElapsedMilliseconds - _lastLogExpiredCheck > 600000)
                     {
-                        LunaLog.LogFilename = Path.Combine(LunaLog.LogFolder, $"lmpserver {LunaNetworkTime.Now:yyyy-MM-dd HH-mm-ss}.log");
-                        LunaLog.Info($"Continued from logfile {LunaNetworkTime.Now:yyyy-MM-dd HH-mm-ss}.log");
-                        ServerContext.Day = LunaNetworkTime.Now.Day;
+                        _lastLogExpiredCheck = ServerContext.ServerClock.ElapsedMilliseconds;
+                        LogExpire.ExpireLogs();
                     }
-                }
 
-                await Task.Delay(250);
+                    // Check if the day has changed, every minute
+                    if (ServerContext.ServerClock.ElapsedMilliseconds - _lastDayCheck > 60000)
+                    {
+                        _lastDayCheck = ServerContext.ServerClock.ElapsedMilliseconds;
+                        if (ServerContext.Day != LunaNetworkTime.Now.Day)
+                        {
+                            LunaLog.LogFilename = Path.Combine(LunaLog.LogFolder, $"lmpserver {LunaNetworkTime.Now:yyyy-MM-dd HH-mm-ss}.log");
+                            LunaLog.Info($"Continued from logfile {LunaNetworkTime.Now:yyyy-MM-dd HH-mm-ss}.log");
+                            ServerContext.Day = (byte)LunaNetworkTime.Now.Day;
+                        }
+                    }
+
+                    await Task.Delay(250);
+                }
             }
         }
     }

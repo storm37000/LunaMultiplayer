@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Server.Command.Command;
 
 namespace Server
 {
@@ -37,18 +38,21 @@ namespace Server
 
         public static readonly CancellationTokenSource CancellationTokenSrc = new CancellationTokenSource();
 
+        public static readonly string startdir = Path.GetDirectoryName("./");
+
         public static void Main()
         {
             try
             {
-                Console.Title = $"LMP {LmpVersioning.CurrentVersion}";
-
                 Console.OutputEncoding = Encoding.Unicode;
 
                 LunaLog.Info("Remember! Quit the server by using 'Control + C' so a backup is properly made before closing!");
 
                 if (Common.PlatformIsWindows())
+                {
+                    Console.Title = $"LMP {LmpVersioning.CurrentVersion}";
                     ExitSignal.Exit += (sender, args) => Exit();
+                }
                 else
                 {
                     //Register the ctrl+c event and exit signal if we are on linux
@@ -67,15 +71,10 @@ namespace Server
                 //Start the server clock
                 ServerContext.ServerClock.Start();
 
-                ServerContext.ServerStarting = true;
+                LunaLog.Normal($"Luna Server version: {LmpVersioning.CurrentVersion} ({startdir})");
 
-                //Set day for log change
-                ServerContext.Day = LunaNetworkTime.Now.Day;
-
-                LunaLog.Normal($"Luna Server version: {LmpVersioning.CurrentVersion} ({Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)})");
-
-                Universe.CheckUniverse();
                 LoadSettingsAndGroups();
+                Universe.CheckUniverse();
                 VesselStoreSystem.LoadExistingVessels();
                 var scenariosCreated = ScenarioSystem.GenerateDefaultScenarios();
                 ScenarioStoreSystem.LoadExistingScenarios(scenariosCreated);
@@ -83,11 +82,11 @@ namespace Server
                 WarpSystem.Reset();
                 TimeSystem.Reset();
 
-                LunaLog.Normal($"Starting '{GeneralSettings.SettingsStore.ServerName}' on Port {ConnectionSettings.SettingsStore.Port}... ");
+                LunaLog.Normal($"Starting '{GeneralSettings.SettingsStore.ServerName}' on UDP port {ConnectionSettings.SettingsStore.Port}" + (WebsiteSettings.SettingsStore.EnableWebsite ? " and TCP port " + WebsiteSettings.SettingsStore.Port : "") + " ...");
 
+                //LmpPortMapper.OpenLmpPort().Wait();
+                //LmpPortMapper.OpenWebPort().Wait();
                 LidgrenServer.SetupLidgrenServer();
-                LmpPortMapper.OpenLmpPort().Wait();
-                LmpPortMapper.OpenWebPort().Wait();
                 ServerContext.ServerRunning = true;
                 WebServer.StartWebServer();
 
@@ -98,19 +97,19 @@ namespace Server
 
                 TaskContainer.Add(LongRunTaskFactory.StartNew(LmpPortMapper.RefreshUpnpPort, CancellationTokenSrc.Token));
                 TaskContainer.Add(LongRunTaskFactory.StartNew(LogThread.RunLogThread, CancellationTokenSrc.Token));
-                TaskContainer.Add(LongRunTaskFactory.StartNew(ClientMainThread.ThreadMain, CancellationTokenSrc.Token));
+                //TaskContainer.Add(LongRunTaskFactory.StartNew(ClientMainThread.ThreadMain, CancellationTokenSrc.Token));
 
-                TaskContainer.Add(LongRunTaskFactory.StartNew(() => BackupSystem.PerformBackups(CancellationTokenSrc.Token), CancellationTokenSrc.Token));
-                TaskContainer.Add(LongRunTaskFactory.StartNew(LidgrenServer.StartReceivingMessages, CancellationTokenSrc.Token));
+                TaskContainer.Add(LongRunTaskFactory.StartNew(BackupSystem.PerformBackups, CancellationTokenSrc.Token));
+                TaskContainer.Add(LongRunTaskFactory.StartNew(NukeCommand.CheckTimer, CancellationTokenSrc.Token));
+                TaskContainer.Add(LongRunTaskFactory.StartNew(DekesslerCommand.CheckTimer, CancellationTokenSrc.Token));
+                //TaskContainer.Add();
+                LongRunTaskFactory.StartNew(LidgrenServer.StartReceivingMessages, CancellationTokenSrc.Token);
                 TaskContainer.Add(LongRunTaskFactory.StartNew(LidgrenMasterServer.RegisterWithMasterServer, CancellationTokenSrc.Token));
 
                 TaskContainer.Add(LongRunTaskFactory.StartNew(VersionChecker.RefreshLatestVersion, CancellationTokenSrc.Token));
                 TaskContainer.Add(LongRunTaskFactory.StartNew(VersionChecker.DisplayNewVersionMsg, CancellationTokenSrc.Token));
 
-                TaskContainer.Add(LongRunTaskFactory.StartNew(() => GcSystem.PerformGarbageCollection(CancellationTokenSrc.Token), CancellationTokenSrc.Token));
-
-                while (ServerContext.ServerStarting)
-                    Thread.Sleep(500);
+                TaskContainer.Add(LongRunTaskFactory.StartNew(GcSystem.PerformGarbageCollection, CancellationTokenSrc.Token));
 
                 LunaLog.Normal("All systems up and running. Поехали!");
                 LmpPluginHandler.FireOnServerStart();
@@ -130,29 +129,32 @@ namespace Server
 
         private static void LoadSettingsAndGroups()
         {
-            LunaLog.Debug("Loading groups...");
+            LunaLog.Normal("Loading groups...");
             GroupSystem.LoadGroups();
-            LunaLog.Debug("Loading settings...");
+            LunaLog.Normal("Loading settings...");
             SettingsHandler.LoadSettings();
+            ServerContext.ConfigsLoaded = true;
             SettingsHandler.ValidateDifficultySettings();
 
             if (GeneralSettings.SettingsStore.ModControl)
             {
-                LunaLog.Debug("Loading mod control...");
+                LunaLog.Normal("Loading mod control...");
                 ModFileSystem.LoadModFile();
             }
 
-            Console.Title += $" ({GeneralSettings.SettingsStore.ServerName})";
-
+            if (Common.PlatformIsWindows())
+            {
+                Console.Title += $" ({GeneralSettings.SettingsStore.ServerName})";
 #if DEBUG
-            Console.Title += " DEBUG";
+                Console.Title += " DEBUG";
 #endif
+            }
         }
 
         /// <summary>
         /// Return the number of running instances.
         /// </summary>
-        private static int GetRunningInstances() => Process.GetProcessesByName("LunaServer.exe").Length;
+        private static int GetRunningInstances() => Process.GetProcessesByName(Common.PlatformIsWindows() ? "Server.exe" : "Server").Length;
 
         /// <summary>
         /// Runs the exit logic
@@ -176,7 +178,7 @@ namespace Server
         public static void Restart()
         {
             //Perform Backups
-            BackupSystem.PerformBackups(CancellationTokenSrc.Token);
+            BackupSystem.PerformBackups();
             LunaLog.Normal("Restarting...  Please wait until all threads are finished");
 
             ServerContext.Shutdown("Server is restarting");
@@ -186,9 +188,8 @@ namespace Server
             QuitEvent.Set();
 
             //Start new server
-            var serverExePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Server.exe";
-            var newProcLmpServer = new ProcessStartInfo { FileName = serverExePath };
-            Process.Start(newProcLmpServer);
+            string serverExePath = Common.PlatformIsWindows() ? Path.Combine(startdir, "Server.exe") : Path.Combine(startdir, "Server");
+            Process.Start(new ProcessStartInfo { FileName = serverExePath });
         }
     }
 }

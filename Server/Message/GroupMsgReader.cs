@@ -5,15 +5,14 @@ using LmpCommon.Message.Server;
 using LmpCommon.Message.Types;
 using Server.Client;
 using Server.Context;
-using Server.Message.Base;
 using Server.Server;
 using Server.System;
 
 namespace Server.Message
 {
-    public class GroupMsgReader : ReaderBase
+    public class GroupMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var data = (GroupBaseMsgData)message.Data;
             switch (data.GroupMessageType)

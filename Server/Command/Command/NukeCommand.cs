@@ -7,22 +7,22 @@ using Server.Server;
 using Server.Settings.Structures;
 using Server.System;
 using System;
+using System.Threading.Tasks;
 
 namespace Server.Command.Command
 {
     public class NukeCommand : SimpleCommand
     {
-        private static long _lastNukeTime;
-
-        public static void CheckTimer()
+        public static async void CheckTimer()
         {
             //0 or less is disabled.
-            if (GeneralSettings.SettingsStore.AutoNuke > 0 &&
-                 ServerContext.ServerClock.ElapsedMilliseconds - _lastNukeTime >
-                 TimeSpan.FromMinutes(GeneralSettings.SettingsStore.AutoNuke).TotalMilliseconds)
+            if (GeneralSettings.SettingsStore.AutoNuke > 0)
             {
-                _lastNukeTime = ServerContext.ServerClock.ElapsedMilliseconds;
-                RunNuke();
+                while (ServerContext.ServerRunning)
+                {
+                    await Task.Delay((int)TimeSpan.FromMinutes(GeneralSettings.SettingsStore.AutoNuke).TotalMilliseconds);
+                    RunNuke();
+                }
             }
         }
 
@@ -34,7 +34,7 @@ namespace Server.Command.Command
 
         private static void RunNuke()
         {
-            var removalCount = 0;
+            uint removalCount = 0;
 
             var vesselList = VesselStoreSystem.CurrentVessels.ToArray();
             foreach (var vesselKeyVal in vesselList)

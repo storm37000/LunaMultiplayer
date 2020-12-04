@@ -205,7 +205,7 @@ namespace Server.System
         {
             lock (GetLockSemaphore(path))
             {
-                Directory.Delete(path);
+                Directory.Delete(path, true);
             }
         }
 

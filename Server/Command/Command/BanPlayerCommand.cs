@@ -46,7 +46,7 @@ namespace Server.Command.Command
 
         public static IEnumerable<string> GetBannedPlayers()
         {
-            return FileHandler.ReadFileLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LMPPlayerBans.txt"));
+            return FileHandler.ReadFileLines(Path.Combine(MainServer.startdir, "LMPPlayerBans.txt"));
         }
     }
 }

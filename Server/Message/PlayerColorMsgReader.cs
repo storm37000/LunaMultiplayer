@@ -4,16 +4,15 @@ using LmpCommon.Message.Server;
 using LmpCommon.Message.Types;
 using Server.Client;
 using Server.Context;
-using Server.Message.Base;
 using Server.Server;
 using System;
 using System.Linq;
 
 namespace Server.Message
 {
-    public class PlayerColorMsgReader : ReaderBase
+    public class PlayerColorMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var messageData = message.Data as PlayerColorBaseMsgData;
             switch (messageData?.PlayerColorMessageType)

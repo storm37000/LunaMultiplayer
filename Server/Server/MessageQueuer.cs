@@ -1,6 +1,8 @@
 ﻿using LmpCommon.Message.Interface;
 using Server.Client;
 using Server.Context;
+using Server.Plugin;
+using System;
 using System.Linq;
 
 namespace Server.Server
@@ -94,7 +96,7 @@ namespace Server.Server
         {
             if (msg?.Data == null) return;
 
-            client?.SendMessageQueue.Enqueue(msg);
+            client?.SendMessage(msg);
         }
 
         private static T GenerateMessage<T>(IMessageData data) where T : class, IServerMessageBase

@@ -26,13 +26,8 @@ namespace Server.Client
         public static void DisconnectClient(ClientStructure client, string reason = "")
         {
             if (!string.IsNullOrEmpty(reason))
-                LunaLog.Debug($"{client.PlayerName} sent Connection end message, reason: {reason}");
-
-            //Remove Clients from list
-            if (ServerContext.Clients.ContainsKey(client.Endpoint))
             {
-                ServerContext.Clients.TryRemove(client.Endpoint, out client);
-                LunaLog.Debug($"Online Players: {ServerContext.PlayerCount}, connected: {ServerContext.Clients.Count}");
+                LunaLog.Debug($"{client.PlayerName} sent Connection end message, reason: {reason}");
             }
 
             if (client.ConnectionStatus != ConnectionStatus.Disconnected)
@@ -59,10 +54,21 @@ namespace Server.Client
                 }
             }
 
+            //Remove Clients from list
+            if (ServerContext.Clients.TryRemove(client.Endpoint, out ClientStructure removed))
+            {
+                LunaLog.Debug($"Online Players: {ServerContext.PlayerCount}, connected: {ServerContext.Clients.Count}");
+            }
+            else
+            {
+                LunaLog.Error($"Error removing client: {client.PlayerName} from list");
+            }
+
             //As this is the last client that is connected to the server, run a safety backup once he disconnects
             if (ServerContext.Clients.Count == 0)
             {
                 BackupSystem.RunBackup();
+                GcSystem.PerformGCNow();
             }
         }
     }

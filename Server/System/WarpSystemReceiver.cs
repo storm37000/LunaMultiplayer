@@ -11,7 +11,7 @@ namespace Server.System
     {
         private static readonly object CreateSubspaceLock = new object();
 
-        public void HandleNewSubspace(ClientStructure client, WarpNewSubspaceMsgData message)
+        public static void HandleNewSubspace(ClientStructure client, WarpNewSubspaceMsgData message)
         {
             lock (CreateSubspaceLock)
             {
@@ -33,7 +33,7 @@ namespace Server.System
             }
         }
 
-        public void HandleChangeSubspace(ClientStructure client, WarpChangeSubspaceMsgData message)
+        public static void HandleChangeSubspace(ClientStructure client, WarpChangeSubspaceMsgData message)
         {
             if (message.PlayerName != client.PlayerName) return;
 
@@ -63,7 +63,7 @@ namespace Server.System
             }
         }
 
-        public void HandleSubspaceRequest(ClientStructure client)
+        public static void HandleSubspaceRequest(ClientStructure client)
         {
             lock (CreateSubspaceLock)
             {

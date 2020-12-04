@@ -28,13 +28,10 @@ namespace Server.Context
         /// </summary>
         public static void CheckUniverse()
         {
-            LunaLog.Debug($"Loading universe... {GetUniverseSize()}{ByteSize.KiloByteSymbol}");
+            LunaLog.Normal($"Loading universe... {GetUniverseSize()}{ByteSize.KiloByteSymbol}");
 
-            if (!FileHandler.FileExists(ServerContext.ModFilePath))
-                ModFileSystem.GenerateNewModFile();
             if (!FileHandler.FolderExists(ServerContext.UniverseDirectory))
                 FileHandler.FolderCreate(ServerContext.UniverseDirectory);
-
             if (!FileHandler.FolderExists(CraftLibrarySystem.CraftPath))
                 FileHandler.FolderCreate(CraftLibrarySystem.CraftPath);
             if (!FileHandler.FolderExists(FlagSystem.FlagPath))

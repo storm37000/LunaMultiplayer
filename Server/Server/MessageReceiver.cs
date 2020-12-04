@@ -5,45 +5,13 @@ using LmpCommon.Message.Interface;
 using LmpCommon.Time;
 using Server.Client;
 using Server.Context;
-using Server.Log;
 using Server.Message;
-using Server.Message.Base;
 using Server.Plugin;
-using System;
-using System.Collections.Generic;
 
 namespace Server.Server
 {
     public class MessageReceiver
     {
-        #region Handlers
-
-        private static readonly Dictionary<ClientMessageType, ReaderBase> HandlerDictionary = new Dictionary
-            <ClientMessageType, ReaderBase>
-        {
-            [ClientMessageType.Admin] = new AdminMsgReader(),
-            [ClientMessageType.Handshake] = new HandshakeMsgReader(),
-            [ClientMessageType.Chat] = new ChatMsgReader(),
-            [ClientMessageType.PlayerStatus] = new PlayerStatusMsgReader(),
-            [ClientMessageType.PlayerColor] = new PlayerColorMsgReader(),
-            [ClientMessageType.Scenario] = new ScenarioDataMsgReader(),
-            [ClientMessageType.Kerbal] = new KerbalMsgReader(),
-            [ClientMessageType.Settings] = new SettingsMsgReader(),
-            [ClientMessageType.Vessel] = new VesselMsgReader(),
-            [ClientMessageType.CraftLibrary] = new CraftLibraryMsgReader(),
-            [ClientMessageType.Flag] = new FlagSyncMsgReader(),
-            [ClientMessageType.Motd] = new MotdMsgReader(),
-            [ClientMessageType.Warp] = new WarpControlMsgReader(),
-            [ClientMessageType.Lock] = new LockSystemMsgReader(),
-            [ClientMessageType.Mod] = new ModDataMsgReader(),
-            [ClientMessageType.Groups] = new GroupMsgReader(),
-            [ClientMessageType.Facility] = new FacilityMsgReader(),
-            [ClientMessageType.Screenshot] = new ScreenshotMsgReader(),
-            [ClientMessageType.ShareProgress] = new ShareProgressMsgReader(),
-        };
-
-        #endregion
-
         public void ReceiveCallback(ClientStructure client, NetIncomingMessage msg)
         {
             if (client == null || msg.LengthBytes <= 1) return;
@@ -51,8 +19,7 @@ namespace Server.Server
             if (client.ConnectionStatus == ConnectionStatus.Connected)
                 client.LastReceiveTime = ServerContext.ServerClock.ElapsedMilliseconds;
 
-            var message = DeserializeMessage(msg);
-            if (message == null) return;
+            if (!(ServerContext.ClientMessageFactory.Deserialize(msg, LunaNetworkTime.UtcNow.Ticks) is IClientMessageBase message)) return;
 
             LmpPluginHandler.FireOnMessageReceived(client, message);
             //A plugin has handled this message and requested suppression of the default behavior
@@ -72,27 +39,67 @@ namespace Server.Server
                 return;
             }
 
-            //Handle the message
-            try
+            switch (message.MessageType)
             {
-                HandlerDictionary[message.MessageType].HandleMessage(client, message);
-            }
-            catch (Exception e)
-            {
-                LunaLog.Error($"Error handling a message from {client.PlayerName}! {e}");
-            }
-        }
-
-        private static IClientMessageBase DeserializeMessage(NetIncomingMessage msg)
-        {
-            try
-            {
-                return ServerContext.ClientMessageFactory.Deserialize(msg, LunaNetworkTime.UtcNow.Ticks) as IClientMessageBase;
-            }
-            catch (Exception e)
-            {
-                LunaLog.Error($"Error deserializing message! {e}");
-                return null;
+                case ClientMessageType.Admin:
+                    AdminMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Handshake:
+                    HandshakeMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Chat:
+                    ChatMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.PlayerStatus:
+                    PlayerStatusMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.PlayerColor:
+                    PlayerColorMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Scenario:
+                    ScenarioDataMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Kerbal:
+                    KerbalMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Settings:
+                    SettingsMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Vessel:
+                    VesselMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.CraftLibrary:
+                    CraftLibraryMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Flag:
+                    FlagSyncMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Motd:
+                    MotdMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Warp:
+                    WarpControlMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Lock:
+                    LockSystemMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Mod:
+                    ModDataMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Groups:
+                    GroupMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Facility:
+                    FacilityMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.Screenshot:
+                    ScreenshotMsgReader.HandleMessage(client, message);
+                    break;
+                case ClientMessageType.ShareProgress:
+                    ShareProgressMsgReader.HandleMessage(client, message);
+                    break;
+                default:
+                    break;
             }
         }
     }

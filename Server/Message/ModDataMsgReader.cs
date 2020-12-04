@@ -2,15 +2,14 @@
 using LmpCommon.Message.Interface;
 using LmpCommon.Message.Server;
 using Server.Client;
-using Server.Message.Base;
 using Server.Plugin;
 using Server.Server;
 
 namespace Server.Message
 {
-    public class ModDataMsgReader : ReaderBase
+    public class ModDataMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var data = (ModMsgData)message.Data;
             if (data.Relay)

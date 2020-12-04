@@ -12,21 +12,21 @@ namespace Server.System
     /// </summary>
     public class GcSystem
     {
-        public static async void PerformGarbageCollection(CancellationToken token)
+        public static async void PerformGarbageCollection()
         {
-            while (ServerContext.ServerRunning && IntervalSettings.SettingsStore.GcMinutesInterval != 0)
+            while (ServerContext.ServerRunning)
             {
-                LunaLog.Debug("Performing a GarbageCollection...");
-                GC.Collect();
-                try
+                if (ServerContext.PlayerCount > 0)
                 {
-                    await Task.Delay((int)TimeSpan.FromMinutes(IntervalSettings.SettingsStore.GcMinutesInterval).TotalMilliseconds, token);
+                    PerformGCNow();
                 }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
+                await Task.Delay((int)TimeSpan.FromMinutes(IntervalSettings.SettingsStore.GcMinutesInterval).TotalMilliseconds);
             }
+        }
+        public static void PerformGCNow()
+        {
+            LunaLog.Normal("Performing a GarbageCollection...");
+            GC.Collect();
         }
     }
 }

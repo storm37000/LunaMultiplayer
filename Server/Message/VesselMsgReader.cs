@@ -6,7 +6,6 @@ using LmpCommon.Message.Types;
 using Server.Client;
 using Server.Context;
 using Server.Log;
-using Server.Message.Base;
 using Server.Server;
 using Server.System;
 using Server.System.Vessel;
@@ -16,9 +15,9 @@ using System.Text;
 
 namespace Server.Message
 {
-    public class VesselMsgReader : ReaderBase
+    public class VesselMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var messageData = message.Data as VesselBaseMsgData;
             switch (messageData?.VesselMessageType)

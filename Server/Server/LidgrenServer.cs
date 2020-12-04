@@ -45,21 +45,8 @@ namespace Server.Server
                 ServerContext.Config.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
             }
 
-            if (DebugSettings.SettingsStore?.SimulatedLossChance < 100 && DebugSettings.SettingsStore?.SimulatedLossChance > 0)
-            {
-                ServerContext.Config.SimulatedLoss = DebugSettings.SettingsStore.SimulatedLossChance / 100f;
-            }
-            if (DebugSettings.SettingsStore?.SimulatedDuplicatesChance < 100 && DebugSettings.SettingsStore?.SimulatedLossChance > 0)
-            {
-                ServerContext.Config.SimulatedDuplicatesChance = DebugSettings.SettingsStore.SimulatedDuplicatesChance / 100f;
-            }
-            ServerContext.Config.SimulatedRandomLatency = (float)TimeSpan.FromMilliseconds((double)DebugSettings.SettingsStore?.MaxSimulatedRandomLatencyMs).TotalSeconds;
-            ServerContext.Config.SimulatedMinimumLatency = (float)TimeSpan.FromMilliseconds((double)DebugSettings.SettingsStore?.MinSimulatedLatencyMs).TotalSeconds;
-
             Server = new NetServer(ServerContext.Config);
             Server.Start();
-
-            ServerContext.ServerStarting = false;
         }
 
         public static async void StartReceivingMessages()
@@ -68,7 +55,7 @@ namespace Server.Server
             {
                 while (ServerContext.ServerRunning)
                 {
-                    var msg = Server.ReadMessage();
+                    var msg = Server.WaitMessage(ServerContext.PlayerCount > 0 ? IntervalSettings.SettingsStore.SendReceiveThreadTickMs : 1000);
                     if (msg != null)
                     {
                         var client = TryGetClient(msg);
@@ -99,6 +86,7 @@ namespace Server.Server
                             case NetIncomingMessageType.VerboseDebugMessage:
                                 LunaLog.NetworkVerboseDebug(msg.ReadString());
                                 break;
+                            case NetIncomingMessageType.ErrorMessage:
                             case NetIncomingMessageType.Error:
                                 LunaLog.Error(msg.ReadString());
                                 break;
@@ -119,14 +107,14 @@ namespace Server.Server
                                 break;
                             default:
                                 var details = msg.PeekString();
-                                LunaLog.Debug($"Lidgren: {msg.MessageType.ToString().ToUpper()} -- {details}");
+                                LunaLog.Warning($"Unhandled Lidgren Message: {msg.MessageType.ToString().ToUpper()} -- {details}");
                                 break;
                         }
                     }
-                    else
-                    {
-                        await Task.Delay(IntervalSettings.SettingsStore.SendReceiveThreadTickMs);
-                    }
+//                    else
+//                    {
+//                        await Task.Delay(IntervalSettings.SettingsStore.SendReceiveThreadTickMs);
+//                    }
                 }
             }
             catch (Exception e)
@@ -153,17 +141,12 @@ namespace Server.Server
             message.Serialize(outmsg);
 
             client.LastSendTime = ServerContext.ServerClock.ElapsedMilliseconds;
-            client.BytesSent += outmsg.LengthBytes;
+            client.BytesSent += (uint)outmsg.LengthBytes;
 
-            var sendResult = Server.SendMessage(outmsg, client.Connection, message.NetDeliveryMethod, message.Channel);
+            Server.SendMessage(outmsg, client.Connection, message.NetDeliveryMethod, message.Channel);
 
             //Force send of packets
             Server.FlushSendQueue();
-        }
-
-        public static void ShutdownLidgrenServer()
-        {
-            Server.Shutdown("So long and thanks for all the fish");
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Server.Log
         public static void ExpireLogs()
         {
             //Check if the ExpireLogs setting is enabled and directory exists
-            if (LogSettings.SettingsStore.ExpireLogs > 0 && FileHandler.FolderExists(LogDirectory))
+            if (FileHandler.FolderExists(LogDirectory))
                 foreach (var logFile in FileHandler.GetFilesInPath(LogDirectory))
                     RemoveExpiredLog(logFile);
         }

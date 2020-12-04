@@ -22,8 +22,8 @@ namespace Server.Web
     /// </summary>
     public static class WebServer
     {
-        private static readonly HttpServer Server = new HttpServer(new HttpRequestProvider());
-        public static readonly ServerInformation ServerInformation = new ServerInformation();
+        private static HttpServer Server;
+        public static ServerInformation ServerInformation { get; private set; }
 
         static WebServer() => ExitEvent.ServerClosing += StopWebServer;
 
@@ -38,6 +38,8 @@ namespace Server.Web
                 {
                     if (!LunaNetUtils.IsTcpPortInUse(WebsiteSettings.SettingsStore.Port))
                     {
+                        Server = new HttpServer(new HttpRequestProvider());
+                        ServerInformation = new ServerInformation();
                         Server.Use(new TcpListenerAdapter(new TcpListener(IPAddress.Any, WebsiteSettings.SettingsStore.Port)));
                         Server.Use(new ExceptionHandler());
                         Server.Use(new CompressionHandler(DeflateCompressor.Default, GZipCompressor.Default));

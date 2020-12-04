@@ -5,15 +5,14 @@ using LmpCommon.Message.Server;
 using LmpCommon.Message.Types;
 using Server.Client;
 using Server.Log;
-using Server.Message.Base;
 using Server.Server;
 using Server.System.Scenario;
 
 namespace Server.Message
 {
-    public class FacilityMsgReader : ReaderBase
+    public class FacilityMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var data = (FacilityBaseMsgData)message.Data;
             switch (data.FacilityMessageType)

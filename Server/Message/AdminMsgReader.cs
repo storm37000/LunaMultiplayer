@@ -8,15 +8,14 @@ using Server.Client;
 using Server.Command;
 using Server.Context;
 using Server.Log;
-using Server.Message.Base;
 using Server.Server;
 using Server.Settings.Structures;
 
 namespace Server.Message
 {
-    public class AdminMsgReader : ReaderBase
+    public class AdminMsgReader
     {
-        public override void HandleMessage(ClientStructure client, IClientMessageBase message)
+        public static void HandleMessage(ClientStructure client, IClientMessageBase message)
         {
             var messageData = (AdminBaseMsgData)message.Data;
             if (!string.IsNullOrEmpty(GeneralSettings.SettingsStore.AdminPassword) && GeneralSettings.SettingsStore.AdminPassword == messageData.AdminPassword)

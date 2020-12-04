@@ -1,6 +1,7 @@
 ﻿using Lidgren.Network;
 using LmpCommon.Message;
 using Server.Client;
+using Server.Log;
 using Server.Server;
 using Server.Settings.Structures;
 using System;
@@ -17,17 +18,17 @@ namespace Server.Context
         public static int PlayerCount => ClientRetriever.GetActiveClientCount();
         public static readonly ConcurrentDictionary<IPEndPoint, ClientStructure> Clients = new ConcurrentDictionary<IPEndPoint, ClientStructure>();
 
-        public static volatile bool ServerRunning;
-        public static volatile bool ServerStarting;
-        public static volatile int Day;
+        public static volatile bool ServerRunning = false;
+        public static volatile bool ConfigsLoaded = false;
+        public static volatile byte Day;
 
         public static string Players => ClientRetriever.GetActivePlayerNames();
         public static bool UsePassword => !string.IsNullOrEmpty(GeneralSettings.SettingsStore.Password);
 
         public static Stopwatch ServerClock = new Stopwatch();
-        public static string ModFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LMPModControl.xml");
-        public static string UniverseDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Universe");
-        public static string ConfigDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config");
+        public static string ModFilePath = Path.Combine(MainServer.startdir, "LMPModControl.xml");
+        public static string UniverseDirectory = Path.Combine(MainServer.startdir, "Universe");
+        public static string ConfigDirectory = Path.Combine(MainServer.startdir, "Config");
 
         // Configuration object
         public static NetPeerConfiguration Config { get; } = new NetPeerConfiguration("LMP")
@@ -44,10 +45,12 @@ namespace Server.Context
 
         public static void Shutdown(string reason)
         {
+            LunaLog.Debug($"Shutting down with {PlayerCount} Players, " + $"{Clients.Count} connected Clients");
             MessageQueuer.SendConnectionEndToAll(reason);
             Thread.Sleep(250);
-            ServerStarting = false;
+            ConfigsLoaded = false;
             ServerRunning = false;
+            LidgrenServer.Server.Shutdown("So long and thanks for all the fish");
         }
     }
 }

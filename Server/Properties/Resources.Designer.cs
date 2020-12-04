@@ -166,7 +166,10 @@ namespace Server.Properties {
         ///	Vall = 30
         ///	Laythe = 30
         ///	Jool = 30
-        ///	Ike =  [rest of string was truncated]&quot;;.
+        ///	Ike = 30
+        ///	Duna = 30
+        ///	Eve = 30
+        ///	Moho [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ContractSystem {
             get {
@@ -216,7 +219,12 @@ namespace Server.Properties {
         ///	SeismicScienceProcessingDelay = 3
         ///	ENTRY
         ///	{
-        ///		BodyName = Moh [rest of string was truncated]&quot;;.
+        ///		BodyName = Moho
+        ///		Energy = 2.02E+09
+        ///	}
+        ///	ENTRY
+        ///	{
+        ///		Body [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DeployedScience {
             get {
@@ -404,7 +412,9 @@ namespace Server.Properties {
         ///{
         ///	intact = True
         ///}
-        ///SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_wa [rest of string was truncated]&quot;;.
+        ///SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_waterTower
+        ///{
+        ///	intact = T [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ScenarioDestructibles {
             get {

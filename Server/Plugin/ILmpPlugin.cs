@@ -6,11 +6,6 @@ namespace Server.Plugin
     public interface ILmpPlugin
     {
         /// <summary>
-        ///     Fires every main thread tick (10ms).
-        /// </summary>
-        void OnUpdate();
-
-        /// <summary>
         ///     Fires just after the server is started or restarted.
         /// </summary>
         void OnServerStart();

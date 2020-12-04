@@ -27,6 +27,6 @@ namespace LmpCommon.Message.MasterServer
 
         public override MasterServerMessageType MessageType => MasterServerMessageType.Main;
         protected override int DefaultChannel => 1;
-        public override NetDeliveryMethod NetDeliveryMethod => NetDeliveryMethod.ReliableOrdered;
+        public override NetDeliveryMethod NetDeliveryMethod => NetDeliveryMethod.Unreliable;
     }
 }

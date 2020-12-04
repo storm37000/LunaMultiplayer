@@ -14,7 +14,7 @@ namespace Server.System
 
         private static readonly object LockObj = new object();
 
-        public static async void PerformBackups(CancellationToken token)
+        public static async void PerformBackups()
         {
             while (ServerContext.ServerRunning)
             {
@@ -22,15 +22,7 @@ namespace Server.System
                 {
                     RunBackup();
                 }
-
-                try
-                {
-                    await Task.Delay(IntervalSettings.SettingsStore.BackupIntervalMs, token);
-                }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
+                await Task.Delay(IntervalSettings.SettingsStore.BackupIntervalMs);
             }
         }
 
@@ -38,7 +30,7 @@ namespace Server.System
         {
             lock (LockObj)
             {
-                LunaLog.Debug("Performing backups...");
+                LunaLog.Normal("Performing backups...");
                 VesselStoreSystem.BackupVessels();
                 WarpSystem.BackupSubspaces();
                 TimeSystem.BackupStartTime();

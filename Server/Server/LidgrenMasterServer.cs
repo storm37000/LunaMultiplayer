@@ -25,8 +25,8 @@ namespace Server.Server
 
             var adr = LunaNetUtils.GetOwnInternalIpAddress();
             if (adr == null) return;
-
             var endpoint = new IPEndPoint(adr, ServerContext.Config.Port);
+
             while (ServerContext.ServerRunning)
             {
                 var msgData = ServerContext.ServerMessageFactory.CreateNewMessageData<MsRegisterServerMsgData>();
@@ -68,25 +68,22 @@ namespace Server.Server
 
         private static void RegisterWithMasterServer(MsRegisterServerMsgData msgData, IPEndPoint masterServer)
         {
-            Task.Run(() =>
+            var msg = ServerContext.MasterServerMessageFactory.CreateNew<MainMstSrvMsg>(msgData);
+            msg.Data.SentTime = LunaNetworkTime.UtcNow.Ticks;
+
+            try
             {
-                var msg = ServerContext.MasterServerMessageFactory.CreateNew<MainMstSrvMsg>(msgData);
-                msg.Data.SentTime = LunaNetworkTime.UtcNow.Ticks;
+                var outMsg = LidgrenServer.Server.CreateMessage(msg.GetMessageSize());
+                msg.Serialize(outMsg);
+                LidgrenServer.Server.SendUnconnectedMessage(outMsg, masterServer);
 
-                try
-                {
-                    var outMsg = LidgrenServer.Server.CreateMessage(msg.GetMessageSize());
-                    msg.Serialize(outMsg);
-                    LidgrenServer.Server.SendUnconnectedMessage(outMsg, masterServer);
-
-                    //Force send of packets
-                    LidgrenServer.Server.FlushSendQueue();
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            });
+                //Force send of packets
+                LidgrenServer.Server.FlushSendQueue();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
     }
 }

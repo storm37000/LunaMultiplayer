@@ -1,0 +1,90 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{EF460BC9-ACAE-45AB-B7EE-F71C7B23A3CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LmpCommon", "LmpCommon\LmpCommon.csproj", "{7AF7550F-4A8E-46F6-BE36-F6CEC7708987}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LunaConfigNode", "LunaConfigNode\LunaConfigNode.csproj", "{1497ACF1-FC43-4EC0-9A69-0A75DCDFB9A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CachedQuickLz", "CachedQuickLz\CachedQuickLz.csproj", "{486063DB-38EC-4096-B549-C4BCBBE6DE1F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LmpGlobal", "LmpGlobal\LmpGlobal.csproj", "{004B7215-9FBA-41BE-AA3D-4E9A9D6B3E45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LmpUpdater", "LmpUpdater\LmpUpdater.csproj", "{2D859364-C35F-47E1-A132-7333AC5D8271}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LMP MasterServer", "LMP MasterServer", "{25FA7BEC-8E1E-49E7-98BC-165BEBFEC9F3}"
+	ProjectSection(SolutionItems) = preProject
+		MasterServersList\BannedIpList.txt = MasterServersList\BannedIpList.txt
+		MasterServersList\DedicatedServersList.txt = MasterServersList\DedicatedServersList.txt
+		MasterServersList\MasterServersList.txt = MasterServersList\MasterServersList.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LMP Server", "LMP Server", "{1EBE7436-F7FA-4961-8B35-8C3C01BD7002}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common projects", "Common projects", "{0330035F-F442-4F5F-8D00-85A2B7C6B874}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{09AEB353-B2BD-41FC-875E-AEB3BE4F27B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasterServer", "MasterServer\MasterServer.csproj", "{2585A190-D697-4F29-916C-C8F6844D17C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LmpMasterServer", "LmpMasterServer\LmpMasterServer.csproj", "{122246CF-D02D-4EB4-839E-0499B24EB639}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF460BC9-ACAE-45AB-B7EE-F71C7B23A3CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF460BC9-ACAE-45AB-B7EE-F71C7B23A3CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF460BC9-ACAE-45AB-B7EE-F71C7B23A3CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF460BC9-ACAE-45AB-B7EE-F71C7B23A3CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AF7550F-4A8E-46F6-BE36-F6CEC7708987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AF7550F-4A8E-46F6-BE36-F6CEC7708987}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AF7550F-4A8E-46F6-BE36-F6CEC7708987}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AF7550F-4A8E-46F6-BE36-F6CEC7708987}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1497ACF1-FC43-4EC0-9A69-0A75DCDFB9A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1497ACF1-FC43-4EC0-9A69-0A75DCDFB9A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1497ACF1-FC43-4EC0-9A69-0A75DCDFB9A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1497ACF1-FC43-4EC0-9A69-0A75DCDFB9A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{486063DB-38EC-4096-B549-C4BCBBE6DE1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{486063DB-38EC-4096-B549-C4BCBBE6DE1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{486063DB-38EC-4096-B549-C4BCBBE6DE1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{486063DB-38EC-4096-B549-C4BCBBE6DE1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{004B7215-9FBA-41BE-AA3D-4E9A9D6B3E45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{004B7215-9FBA-41BE-AA3D-4E9A9D6B3E45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{004B7215-9FBA-41BE-AA3D-4E9A9D6B3E45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{004B7215-9FBA-41BE-AA3D-4E9A9D6B3E45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D859364-C35F-47E1-A132-7333AC5D8271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D859364-C35F-47E1-A132-7333AC5D8271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D859364-C35F-47E1-A132-7333AC5D8271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D859364-C35F-47E1-A132-7333AC5D8271}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2585A190-D697-4F29-916C-C8F6844D17C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2585A190-D697-4F29-916C-C8F6844D17C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2585A190-D697-4F29-916C-C8F6844D17C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2585A190-D697-4F29-916C-C8F6844D17C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{122246CF-D02D-4EB4-839E-0499B24EB639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{122246CF-D02D-4EB4-839E-0499B24EB639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{122246CF-D02D-4EB4-839E-0499B24EB639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{122246CF-D02D-4EB4-839E-0499B24EB639}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EF460BC9-ACAE-45AB-B7EE-F71C7B23A3CB} = {1EBE7436-F7FA-4961-8B35-8C3C01BD7002}
+		{7AF7550F-4A8E-46F6-BE36-F6CEC7708987} = {0330035F-F442-4F5F-8D00-85A2B7C6B874}
+		{1497ACF1-FC43-4EC0-9A69-0A75DCDFB9A3} = {09AEB353-B2BD-41FC-875E-AEB3BE4F27B5}
+		{486063DB-38EC-4096-B549-C4BCBBE6DE1F} = {09AEB353-B2BD-41FC-875E-AEB3BE4F27B5}
+		{004B7215-9FBA-41BE-AA3D-4E9A9D6B3E45} = {0330035F-F442-4F5F-8D00-85A2B7C6B874}
+		{2D859364-C35F-47E1-A132-7333AC5D8271} = {0330035F-F442-4F5F-8D00-85A2B7C6B874}
+		{2585A190-D697-4F29-916C-C8F6844D17C5} = {25FA7BEC-8E1E-49E7-98BC-165BEBFEC9F3}
+		{122246CF-D02D-4EB4-839E-0499B24EB639} = {25FA7BEC-8E1E-49E7-98BC-165BEBFEC9F3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {570DCDEC-0BF5-4429-91F3-0BE4E0F1221C}
+	EndGlobalSection
+EndGlobal

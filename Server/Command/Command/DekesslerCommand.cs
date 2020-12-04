@@ -7,22 +7,22 @@ using Server.Server;
 using Server.Settings.Structures;
 using Server.System;
 using System;
+using System.Threading.Tasks;
 
 namespace Server.Command.Command
 {
     public class DekesslerCommand : SimpleCommand
     {
-        private static long _lastDekesslerTime;
-
-        public static void CheckTimer()
+        public static async void CheckTimer()
         {
             //0 or less is disabled.
-            if (GeneralSettings.SettingsStore.AutoDekessler > 0 &&
-                ServerContext.ServerClock.ElapsedMilliseconds - _lastDekesslerTime >
-                TimeSpan.FromMinutes(GeneralSettings.SettingsStore.AutoDekessler).TotalMilliseconds)
+            if (GeneralSettings.SettingsStore.AutoDekessler > 0)
             {
-                _lastDekesslerTime = ServerContext.ServerClock.ElapsedMilliseconds;
-                RunDekessler();
+                while (ServerContext.ServerRunning)
+                {
+                    await Task.Delay((int)TimeSpan.FromMinutes(GeneralSettings.SettingsStore.AutoDekessler).TotalMilliseconds);
+                    RunDekessler();
+                }
             }
         }
 
@@ -34,7 +34,7 @@ namespace Server.Command.Command
 
         private static void RunDekessler()
         {
-            var removalCount = 0;
+            uint removalCount = 0;
 
             var vesselList = VesselStoreSystem.CurrentVessels.ToArray();
             foreach (var vesselKeyVal in vesselList)

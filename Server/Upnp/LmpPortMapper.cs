@@ -39,7 +39,7 @@ namespace Server.Upnp
         /// Opens the port set in the settings using UPnP. With a lifetime of <see cref="LifetimeInSeconds"/> seconds
         /// </summary>
         [DebuggerHidden]
-        public static async Task OpenLmpPort(bool verbose = true)
+        public static async Task OpenLmpPort()
         {
             if (ConnectionSettings.SettingsStore.Upnp)
             {
@@ -47,11 +47,11 @@ namespace Server.Upnp
                 {
                     var device = await Device.GetValueAsync();
                     await device.CreatePortMapAsync(LmpPortMapping);
-                    if (verbose) LunaLog.Debug($"UPnP active. Port: {ConnectionSettings.SettingsStore.Port} {LmpPortMapping.Protocol} opened!");
+                    LunaLog.Debug($"UPnP opened game port: {ConnectionSettings.SettingsStore.Port} protocol: {LmpPortMapping.Protocol}");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // ignored
+                    LunaLog.Error($"UPnP failed to open game port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message. (" + e.Message + ")");
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace Server.Upnp
         /// Opens the website port set in the settings using UPnP. With a lifetime of <see cref="LifetimeInSeconds"/> seconds
         /// </summary>
         [DebuggerHidden]
-        public static async Task OpenWebPort(bool verbose = true)
+        public static async Task OpenWebPort()
         {
             if (ConnectionSettings.SettingsStore.Upnp && WebsiteSettings.SettingsStore.EnableWebsite)
             {
@@ -68,11 +68,11 @@ namespace Server.Upnp
                 {
                     var device = await Device.GetValueAsync();
                     await device.CreatePortMapAsync(LmpWebPortMapping);
-                    if (verbose) LunaLog.Debug($"UPnP + Website active. Port: {WebsiteSettings.SettingsStore.Port} {LmpWebPortMapping.Protocol} opened!");
+                    LunaLog.Debug($"UPnP opened http port: {WebsiteSettings.SettingsStore.Port} protocol: {LmpWebPortMapping.Protocol}");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // ignored
+                    LunaLog.Error($"UPnP failed to open http port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message. (" + e.Message + ")");
                 }
             }
         }
@@ -86,8 +86,8 @@ namespace Server.Upnp
             {
                 while (ServerContext.ServerRunning)
                 {
-                    await OpenLmpPort(false);
-                    await OpenWebPort(false);
+                    await OpenLmpPort();
+                    await OpenWebPort();
                     await Task.Delay((int)TimeSpan.FromSeconds(60).TotalMilliseconds);
                 }
             }
@@ -105,7 +105,7 @@ namespace Server.Upnp
                 {
                     var device = await Device.GetValueAsync();
                     await device.DeletePortMapAsync(LmpPortMapping);
-                    LunaLog.Debug($"UPnP active. Port: {ConnectionSettings.SettingsStore.Port} {LmpPortMapping.Protocol} closed!");
+                    LunaLog.Debug($"UPnP closed game port: {ConnectionSettings.SettingsStore.Port} protocol: {LmpPortMapping.Protocol}");
                 }
                 catch (Exception)
                 {
@@ -126,7 +126,7 @@ namespace Server.Upnp
                 {
                     var device = await Device.GetValueAsync();
                     await device.DeletePortMapAsync(LmpWebPortMapping);
-                    LunaLog.Debug($"UPnP + Website active. Port: {WebsiteSettings.SettingsStore.Port} {LmpWebPortMapping.Protocol} closed!");
+                    LunaLog.Debug($"UPnP closed http port: {WebsiteSettings.SettingsStore.Port} protocol: {LmpWebPortMapping.Protocol}");
                 }
                 catch (Exception)
                 {

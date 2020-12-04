@@ -5,6 +5,7 @@ using Server.Client;
 using Server.Context;
 using Server.Server;
 using Server.Settings.Structures;
+using LmpCommon.Xml;
 
 namespace Server.System
 {
@@ -23,7 +24,7 @@ namespace Server.System
 
                 if (GeneralSettings.SettingsStore.ModControl)
                 {
-                    msgData.ModFileData = FileHandler.ReadFileText(ServerContext.ModFilePath);
+                    msgData.ModFileData = LunaXmlSerializer.SerializeToXml(ModFileSystem.ModControl);
                 }
             }
 

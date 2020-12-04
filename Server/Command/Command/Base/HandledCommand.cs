@@ -18,7 +18,7 @@ namespace Server.Command.Command.Base
 
         protected virtual List<string> Items { get; set; } = new List<string>();
 
-        protected string FullPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FileName);
+        protected string FullPath => Path.Combine(MainServer.startdir, FileName);
 
         #region Protected methods
 

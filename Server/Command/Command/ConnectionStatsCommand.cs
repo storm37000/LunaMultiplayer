@@ -10,8 +10,8 @@ namespace Server.Command.Command
         public override bool Execute(string commandArgs)
         {
             //Do some shit here.
-            long bytesSentTotal = 0;
-            long bytesReceivedTotal = 0;
+            ulong bytesSentTotal = 0;
+            ulong bytesReceivedTotal = 0;
             LunaLog.Normal("Connection stats:");
             LunaLog.Normal($"Nist Time Difference: {LunaNetworkTime.TimeDifference.TotalMilliseconds} ms");
             foreach (var client in ClientRetriever.GetAuthenticatedClients())
