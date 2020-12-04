@@ -80,18 +80,6 @@ You can check [how many servers are up](https://github.com/LunaMultiplayer/LunaM
 Tekbot | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/212.48.114.221:8701.svg?label=status)](http://212.48.114.221:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/212.48.114.221:8751.svg?label=status)](http://212.48.114.221:8751) |
 [Angryjoshi](https://github.com/Angryjoshi) | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/lmp.anschuetznet.de:8701.svg?label=status)](http://lmp.anschuetznet.de:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/lmp.anschuetznet.de:8751.svg?label=status)](http://lmp.anschuetznet.de:8751) |
 Piro | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/178.33.167.161:8701.svg?label=status)](http://178.33.167.161:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/178.33.167.161:8751.svg?label=status)](http://178.33.167.161:8751) |
-
----
-### Status:
-
-|   Branch   |   Build  |   Tests  |  Last commit  |   Activity    |    Commits    |
-| ---------- | -------- | -------- | ------------- | ------------- | ------------- |
-| **master** |[![AppVeyor](https://img.shields.io/appveyor/ci/gavazquez/lunamultiplayer/master.svg?style=flat&logo=appveyor)](https://ci.appveyor.com/project/gavazquez/lunamultiplayer/branch/master) | [![AppVeyor Tests](https://img.shields.io/appveyor/tests/gavazquez/lunamultiplayer/master.svg?style=flat&logo=appveyor)](https://ci.appveyor.com/project/gavazquez/lunamultiplayer/branch/master/tests) | [![Last commit](https://img.shields.io/github/last-commit/lunamultiplayer/lunamultiplayer/master.svg?style=flat&logo=github&logoColor=white)](../../commits/master) | [![Commit activity](https://img.shields.io/github/commit-activity/y/lunamultiplayer/lunamultiplayer.svg?style=flat&logo=github&logoColor=white)](../../commits/master) | [![Commits since release](https://img.shields.io/github/commits-since/lunamultiplayer/lunamultiplayer/latest.svg?style=flat&logo=github&logoColor=white)](../../commits/master)
-
-<p align="center">
-    <a href="https://ci.appveyor.com/project/gavazquez/lunamultiplayer/history"><img src="https://buildstats.info/appveyor/chart/gavazquez/lunamultiplayer?buildCount=100" alt="Build history"/></a>
-</p>
-
 ---
 
 <p align="center">
