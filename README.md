@@ -37,10 +37,10 @@
 - [x] [UDP](https://en.wikipedia.org/wiki/User_Datagram_Protocol) based using the [Lidgren](https://github.com/lidgren/lidgren-network-gen3) library for reliable UDP message handling.
 - [x] [Interpolation](http://www.gabrielgambetta.com/entity-interpolation.html) so the vessels won't jump when there are bad network conditions.
 - [x] Multilanguage.
-- [x] [Nat-punchtrough](../../wiki/Master-server) feature so a server doesn't need to open ports on it's router.
+- [x] [Nat-punchtrough](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server) feature so a server doesn't need to open ports on it's router.
 - [x] Servers displayed within the mod.
 - [x] Settings saved as XML.
-- [x] [UPnP](https://en.wikipedia.org/wiki/Universal_Plug_and_Play) support for servers and [master servers](../../wiki/Master-server)
+- [x] [UPnP](https://en.wikipedia.org/wiki/Universal_Plug_and_Play) support for servers and [master servers](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server)
 - [x] Better creation of network messages so they are easier to modify and serialize.
 - [x] Every network message is cached in order to reduce the garbage collector spikes.
 - [x] Based on tasks instead of threads.
@@ -48,12 +48,12 @@
 - [x] Cached [QuickLZ](http://www.quicklz.com) for fast compression without generating garbage.
 - [ ] Support for groups/companies inside career and science modes.
 
-Please check the [wiki](../../wiki) to see how to [install](../../wiki/How-to-install-LMP), [run](../../wiki/How-to-play-with-LMP), [build](../../wiki/How-to-compile-LMP) or [debug](../../wiki/Debugging-in-Visual-studio) LMP among other things
+Please check the [wiki](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki) to see how to [install](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-install-LMP), [run](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-play-with-LMP), [build](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-compile-LMP) or [debug](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Debugging-in-Visual-studio) LMP among other things
 
 ---
 ### Troubleshooting:
 
-Please visit [this page](../../wiki/Troubleshooting) in the wiki to solve the most common issues with LMP 
+Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Troubleshooting) in the wiki to solve the most common issues with LMP 
 [![Analytics](https://ga-beacon.appspot.com/UA-118326748-1/Home?pixel&useReferer)](https://github.com/igrigorik/ga-beacon)
 
 ---
@@ -70,7 +70,7 @@ There's also a test project in case you want to add tests to your code.
 ---
 ### Servers:
 
-You can check [how many servers are up](../../wiki/Master-server-status) and running either in [Release](../../wiki/How-to-get-the-latest-version-of-LMP) or in [Nightly](../../wiki/How-to-get-nightly-builds) versions through our [master servers](../../wiki/Master-server)
+You can check [how many servers are up](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server-status) and running either in [Release](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-get-the-latest-version-of-LMP) or in [Nightly](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-get-nightly-builds) versions through our [master servers](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server)
 
 <!--[Dagger](https://github.com/gavazquez) | [![Release servers](https://img.shields.io/website-up-down-brightgreen-red/http/servers.lunamultiplayer.com:8701.svg?label=status)](http://servers.lunamultiplayer.com:8701) | [![Nightly servers](https://img.shields.io/website-up-down-brightgreen-red/http/servers.lunamultiplayer.com:8751.svg?label=status)](http://servers.lunamultiplayer.com:8751) |--->
 
