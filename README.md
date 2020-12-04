@@ -18,13 +18,6 @@
 
 ---
 
-<p align="center">
-  <a href="../../releases/latest"><img src="../master/External/downloadIcon.png" alt="Download" height="85" width="300"/></a>
-  <a href="../../wiki"><img src="../master/External/documentationIcon.png" alt="Documentation" height="85" width="353"/></a>
-</p>
-
----
-
 # Luna Multiplayer Mod (LMP)
 
 *Multiplayer mod for [Kerbal Space Program (KSP)](https://kerbalspaceprogram.com)*
@@ -60,7 +53,9 @@ Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
 ---
 ### Servers:
 
-You can check [how many servers are up](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server-status) and running either in [Release](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-get-the-latest-version-of-LMP) or in [Nightly](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-get-nightly-builds) versions through our [master servers](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server)
+[Master Servers Statuses](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Master-server-status) <br>
+[Game Server List Release Version](https://lunamultiplayer.com/pages/releaseservers.html) <br>
+[Game Server List Nightly Version](https://lunamultiplayer.com/pages/nightlyservers.html) <br>
 
 ---
 ### Contributing:
