@@ -47,14 +47,15 @@
 - [x] Supports career and science modes (funds, science, strategies, etc are shared between all players).
 - [x] Cached [QuickLZ](http://www.quicklz.com) for fast compression without generating garbage.
 - [ ] Support for groups/companies inside career and science modes.
+---
+### How to use and configuration:
 
-Please check the [wiki](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki) to see how to [install](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-install-LMP), [run](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-play-with-LMP), [build](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/How-to-compile-LMP) or [debug](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Debugging-in-Visual-studio) LMP among other things
+Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Create-a-server) in the wiki
 
 ---
 ### Troubleshooting:
 
 Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Troubleshooting) in the wiki to solve the most common issues with LMP 
-[![Analytics](https://ga-beacon.appspot.com/UA-118326748-1/Home?pixel&useReferer)](https://github.com/igrigorik/ga-beacon)
 
 ---
 ### Contributing:
