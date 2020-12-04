@@ -1,1 +1,0 @@
-C:\Users\storm37000\Documents\Visual Studio 2019\Projects\LmpServer.Core\Server\bin\Release\netcoreapp3.1\publish\win64\Server.exe
