@@ -11,7 +11,7 @@
     <Copyright>Copyright © 2018</Copyright>
     <Version>0.26.0</Version>
     <PackageId></PackageId>
-    <ApplicationIcon>C:\Users\storm37000\Documents\Visual Studio 2019\Projects\LmpServer.Core\icon.ico</ApplicationIcon>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
