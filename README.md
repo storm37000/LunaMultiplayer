@@ -54,7 +54,7 @@ Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki
 [Game Server List Nightly Version](https://lunamultiplayer.com/pages/nightlyservers.html) <br>
 
 ---
-### [Contributing:](https://github.com/LunaMultiplayer/LunaMultiplayer/blob/master/CONTRIBUTING.md)
+### [Contributing](https://github.com/LunaMultiplayer/LunaMultiplayer/blob/master/CONTRIBUTING.md)
 
 ---
 
