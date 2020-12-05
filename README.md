@@ -40,10 +40,6 @@
 - [x] Supports career and science modes (funds, science, strategies, etc are shared between all players).
 - [x] Cached [QuickLZ](http://www.quicklz.com) for fast compression without generating garbage.
 - [ ] Support for groups/companies inside career and science modes.
----
-### How to use and configuration:
-
-Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Create-a-server) in the wiki
 
 ---
 ### Troubleshooting:
