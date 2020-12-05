@@ -42,6 +42,11 @@
 - [ ] Support for groups/companies inside career and science modes.
 
 ---
+### Running:
+
+Requires the latest version of the .net core 3.1 runtime for your OS [here](https://dotnet.microsoft.com/download/dotnet-core/3.1).<br>
+
+---
 ### Troubleshooting:
 
 Please visit [this page](https://github.com/LunaMultiplayer/LunaMultiplayer/wiki/Troubleshooting) in the wiki to solve the most common issues with LMP
