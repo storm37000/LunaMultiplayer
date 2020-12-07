@@ -9,7 +9,7 @@ using Server.Log;
 using Server.Settings.Structures;
 using Server.Utilities;
 using System;
-using System.Threading.Tasks;
+using System.Net;
 
 namespace Server.Server
 {
@@ -20,6 +20,7 @@ namespace Server.Server
 
         public static void SetupLidgrenServer()
         {
+            //ServerContext.Config.LocalAddress = IPAddress.IPv6Any;
             ServerContext.Config.Port = ConnectionSettings.SettingsStore.Port;
             ServerContext.Config.AutoExpandMTU = ConnectionSettings.SettingsStore.AutoExpandMtu;
             ServerContext.Config.MaximumTransmissionUnit = ConnectionSettings.SettingsStore.MaximumTransmissionUnit;

@@ -47,9 +47,16 @@ namespace LmpCommon
             var properties = ni.GetIPProperties();
             foreach (var unicastAddress in properties.UnicastAddresses)
             {
-                if (unicastAddress?.Address != null && unicastAddress.Address.AddressFamily == AddressFamily.InterNetwork)
+                if (unicastAddress?.Address != null)
                 {
-                    return unicastAddress.IPv4Mask;
+                    if (unicastAddress.Address.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        return unicastAddress.IPv4Mask;
+                    }
+                    else if (unicastAddress.Address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        return unicastAddress.IPv4Mask;
+                    }
                 }
             }
 
@@ -67,7 +74,7 @@ namespace LmpCommon
             var properties = ni.GetIPProperties();
             foreach (var unicastAddress in properties.UnicastAddresses)
             {
-                if (unicastAddress?.Address != null && unicastAddress.Address.AddressFamily == AddressFamily.InterNetwork)
+                if (unicastAddress?.Address != null && (unicastAddress.Address.AddressFamily == AddressFamily.InterNetwork || unicastAddress.Address.AddressFamily == AddressFamily.InterNetworkV6))
                 {
                     return unicastAddress.Address;
                 }
@@ -166,14 +173,14 @@ namespace LmpCommon
             {
                 if (adapter.NetworkInterfaceType == NetworkInterfaceType.Loopback || adapter.NetworkInterfaceType == NetworkInterfaceType.Unknown)
                     continue;
-                if (!adapter.Supports(NetworkInterfaceComponent.IPv4))
+                if (!(adapter.Supports(NetworkInterfaceComponent.IPv4) || adapter.Supports(NetworkInterfaceComponent.IPv6)))
                     continue;
                 if (best == null)
                     best = adapter;
                 if (adapter.OperationalStatus != OperationalStatus.Up)
                     continue;
 
-                // make sure this adapter has any ipv4 addresses
+                // make sure this adapter has any ip addresses
                 var properties = adapter.GetIPProperties();
                 foreach (var unicastAddress in properties.UnicastAddresses)
                 {
