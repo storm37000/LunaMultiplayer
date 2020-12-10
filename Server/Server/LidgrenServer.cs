@@ -56,7 +56,7 @@ namespace Server.Server
             {
                 while (ServerContext.ServerRunning)
                 {
-                    var msg = Server.WaitMessage(ServerContext.PlayerCount > 0 ? IntervalSettings.SettingsStore.SendReceiveThreadTickMs : 1000);
+                    var msg = Server.WaitMessage(ServerContext.PlayerCount > 0 ? IntervalSettings.SettingsStore.SendReceiveThreadTickMs : int.MaxValue);
                     if (msg != null)
                     {
                         var client = TryGetClient(msg);
