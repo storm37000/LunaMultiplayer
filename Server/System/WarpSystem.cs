@@ -11,7 +11,7 @@ namespace Server.System
 {
     public static class WarpSystem
     {
-        private static string SubspaceFile { get; } = Path.Combine(MainServer.startdir, "Subspace.txt");
+        private static string SubspaceFile { get; } = Path.Combine(ServerContext.UniverseDirectory, "Subspace.txt");
 
         public static void Reset()
         {
