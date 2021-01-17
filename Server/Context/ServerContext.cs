@@ -18,7 +18,6 @@ namespace Server.Context
         public static readonly ConcurrentDictionary<IPEndPoint, ClientStructure> Clients = new ConcurrentDictionary<IPEndPoint, ClientStructure>();
 
         public static volatile bool ServerRunning;
-        public static volatile bool ServerStarting;
         public static volatile int Day;
 
         public static string Players => ClientRetriever.GetActivePlayerNames();
@@ -47,7 +46,6 @@ namespace Server.Context
         {
             MessageQueuer.SendConnectionEndToAll(reason);
             Thread.Sleep(250);
-            ServerStarting = false;
             ServerRunning = false;
         }
     }
