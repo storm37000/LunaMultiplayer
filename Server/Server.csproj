@@ -7,9 +7,9 @@
     <Product>LMP</Product>
     <Description>Luna Multiplayer Mod (server) .net core 3.1 version</Description>
     <Company />
-    <Authors>Gabriel Vazquez, storm37000</Authors>
+    <Authors>Gabriel Vazquez and storm37000</Authors>
     <Copyright>Copyright © 2018</Copyright>
-    <Version>0.26.0</Version>
+    <Version>0.27.0</Version>
     <PackageId></PackageId>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Lidgren.Network.Core2" Version="1.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Threading" Version="16.8.55" />
     <PackageReference Include="Noyacode.uHttpSharp" Version="1.0.1" />
     <PackageReference Include="Open.NAT.Core" Version="2.1.0.5" />
@@ -34,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lidgren.Network\Lidgren.Network.csproj" />
     <ProjectReference Include="..\LmpCommon\LmpCommon.csproj" />
     <ProjectReference Include="..\LmpUpdater\LmpUpdater.csproj" />
     <ProjectReference Include="..\LunaConfigNode\LunaConfigNode.csproj" />

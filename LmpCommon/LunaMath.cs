@@ -178,15 +178,5 @@ namespace LmpCommon
         {
             return t - Math.Floor(t / length) * length;
         }
-
-        public static ushort UShortFromBytes(byte b1, byte b2)
-        {
-            return (ushort)(b1 << 8 | b2);
-        }
-
-        public static short ShortFromBytes(byte b1, byte b2)
-        {
-            return (short)(b1 << 8 | b2);
-        }
     }
 }

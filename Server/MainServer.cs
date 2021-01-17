@@ -44,7 +44,7 @@ namespace Server
         {
             try
             {
-                Console.OutputEncoding = Encoding.Unicode;
+                Console.OutputEncoding = Encoding.UTF8;
 
                 LunaLog.Info("Remember! Quit the server by using 'Control + C' so a backup is properly made before closing!");
 
@@ -71,7 +71,7 @@ namespace Server
                 //Start the server clock
                 ServerContext.ServerClock.Start();
 
-                LunaLog.Normal($"Luna Server version: {LmpVersioning.CurrentVersion} ({startdir})");
+                LunaLog.Normal($"Luna Server version: {LmpVersioning.CurrentVersion} by {FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).CompanyName} ({startdir})");
 
                 LoadSettingsAndGroups();
                 Universe.CheckUniverse();

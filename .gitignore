@@ -1,6 +1,6 @@
 *.user
 *.userprefs
-.vs/
+.vs
 TestResults/*
 LmpClient/*.csproj.user
 LmpClient/bin/*

@@ -14,7 +14,7 @@ namespace Server.System
     {
         public static async void PerformGarbageCollection()
         {
-            while (ServerContext.ServerRunning)
+            while (ServerContext.ServerRunning && IntervalSettings.SettingsStore.GcMinutesInterval != 0)
             {
                 if (ServerContext.PlayerCount > 0)
                 {

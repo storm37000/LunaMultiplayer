@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId></PackageId>
-    <Version>0.26.0</Version>
+    <Version>0.27.0</Version>
     <Description>Luna Multiplayer Mod (common)</Description>
     <Copyright>Copyright © 2018</Copyright>
     <Authors>Gabriel Vazquez</Authors>
@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CachedQuickLz\CachedQuickLz.csproj" />
-    <ProjectReference Include="..\Lidgren.Network\Lidgren.Network.csproj" />
     <ProjectReference Include="..\LmpGlobal\LmpGlobal.csproj" />
   </ItemGroup>
 

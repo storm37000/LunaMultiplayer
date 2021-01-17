@@ -40,11 +40,20 @@ namespace Server.Server
             {
                 ServerContext.Config.EnableMessageType(NetIncomingMessageType.DebugMessage);
             }
-
             if (LogSettings.SettingsStore.LogLevel >= LogLevels.VerboseNetworkDebug)
             {
                 ServerContext.Config.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
             }
+            if (DebugSettings.SettingsStore?.SimulatedLossChance < 100 && DebugSettings.SettingsStore?.SimulatedLossChance > 0)
+            {
+                ServerContext.Config.SimulatedLoss = DebugSettings.SettingsStore.SimulatedLossChance / 100f;
+            }
+            if (DebugSettings.SettingsStore?.SimulatedDuplicatesChance < 100 && DebugSettings.SettingsStore?.SimulatedLossChance > 0)
+            {
+                ServerContext.Config.SimulatedDuplicatesChance = DebugSettings.SettingsStore.SimulatedDuplicatesChance / 100f;
+            }
+            ServerContext.Config.SimulatedRandomLatency = (float)TimeSpan.FromMilliseconds((double)DebugSettings.SettingsStore?.MaxSimulatedRandomLatencyMs).TotalSeconds;
+            ServerContext.Config.SimulatedMinimumLatency = (float)TimeSpan.FromMilliseconds((double)DebugSettings.SettingsStore?.MinSimulatedLatencyMs).TotalSeconds;
 
             Server = new NetServer(ServerContext.Config);
             Server.Start();
