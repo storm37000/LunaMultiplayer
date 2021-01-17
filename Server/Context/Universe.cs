@@ -28,7 +28,7 @@ namespace Server.Context
         /// </summary>
         public static void CheckUniverse()
         {
-            LunaLog.Debug($"Loading universe... {GetUniverseSize()}{ByteSize.KiloByteSymbol}");
+            LunaLog.Normal($"Loading universe... {GetUniverseSize()}{ByteSize.KiloByteSymbol}");
 
             if (!FileHandler.FileExists(ServerContext.ModFilePath))
                 ModFileSystem.GenerateNewModFile();
