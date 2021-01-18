@@ -12,6 +12,7 @@ namespace Server.Web.Structures
         public ServerLogSettings ServerLogSettings { get; } = new ServerLogSettings();
         public ServerIntervalSettings ServerIntervalSettings { get; } = new ServerIntervalSettings();
         public ServerGameplaySettings ServerGameplaySettings { get; } = new ServerGameplaySettings();
+        public ServerDebugSettings ServerDebugSettings { get; } = new ServerDebugSettings();
         public ServerCraftSettings ServerCraftSettings { get; } = new ServerCraftSettings();
         public ServerConnectionSettings ServerConnectionSettings { get; } = new ServerConnectionSettings();
         public ServerWebsiteSettings ServerWebsiteSettings { get; } = new ServerWebsiteSettings();

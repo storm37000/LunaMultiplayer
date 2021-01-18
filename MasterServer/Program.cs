@@ -29,7 +29,6 @@ namespace MasterServer
 
         private static readonly ManualResetEvent QuitEvent = new ManualResetEvent(false);
         private static readonly string DllPath = Path.Combine(Directory.GetCurrentDirectory(), DllFileName);
-        private static readonly AppDomainSetup DomainSetup = new AppDomainSetup { ApplicationBase = AppDomain.CurrentDomain.BaseDirectory };
 
         private static Version CurrentVersion
         {
@@ -78,7 +77,7 @@ namespace MasterServer
         /// </summary>
         private static void StartMasterServerDll()
         {
-            LmpDomain = AppDomain.CreateDomain("LmpMasterServer", null, DomainSetup);
+            LmpDomain = AppDomain.CreateDomain("LmpMasterServer");
             LmpDomain.SetData("Arguments", Arguments);
             LmpDomain.SetData("Stop", false);
 
