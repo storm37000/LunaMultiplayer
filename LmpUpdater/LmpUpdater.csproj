@@ -16,7 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ionic.Zip" Version="1.9.1.8" />
     <PackageReference Include="JsonFx" Version="2.0.1209.2802" />
   </ItemGroup>
 

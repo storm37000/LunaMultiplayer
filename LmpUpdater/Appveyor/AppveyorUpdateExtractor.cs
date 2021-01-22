@@ -1,5 +1,4 @@
-﻿using Ionic.Zip;
-using System;
+﻿using System;
 using System.IO;
 
 namespace LmpUpdater.Appveyor
@@ -11,29 +10,26 @@ namespace LmpUpdater.Appveyor
             if (string.IsNullOrEmpty(zipFilePath) || string.IsNullOrEmpty(destinationFolder) || !Directory.Exists(destinationFolder) || !File.Exists(zipFilePath))
                 return;
 
-            using (var zipFile = ZipFile.Read(zipFilePath))
+            var tempFolder = Path.Combine(destinationFolder, "TempUnzipFolder");
+            Directory.CreateDirectory(tempFolder);
+            System.IO.Compression.ZipFile.ExtractToDirectory(zipFilePath, tempFolder, true);
+
+            switch (product)
             {
-                var tempFolder = Path.Combine(destinationFolder, "TempUnzipFolder");
-                Directory.CreateDirectory(tempFolder);
-                zipFile.ExtractAll(tempFolder, ExtractExistingFileAction.OverwriteSilently);
-
-                switch (product)
-                {
-                    case AppveyorProduct.Client:
-                        ExtractClient(tempFolder);
-                        break;
-                    case AppveyorProduct.Server:
-                        ExtractServer(tempFolder);
-                        break;
-                    case AppveyorProduct.MasterServer:
-                        ExtractMasterServer(tempFolder);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(product), product, null);
-                }
-
-                Directory.Delete(tempFolder, true);
+                case AppveyorProduct.Client:
+                    ExtractClient(tempFolder);
+                    break;
+                case AppveyorProduct.Server:
+                    ExtractServer(tempFolder);
+                    break;
+                case AppveyorProduct.MasterServer:
+                    ExtractMasterServer(tempFolder);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(product), product, null);
             }
+
+            Directory.Delete(tempFolder, true);
 
             File.Delete(zipFilePath);
         }

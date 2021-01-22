@@ -17,9 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ByteSize" Version="1.3.0" />
     <PackageReference Include="Lidgren.Network.Core2" Version="1.0.0" />
-    <PackageReference Include="System.Linq" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

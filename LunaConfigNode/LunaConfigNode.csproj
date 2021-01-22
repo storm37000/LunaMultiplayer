@@ -16,8 +16,4 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Linq" Version="4.3.0" />
-  </ItemGroup>
-
 </Project>
