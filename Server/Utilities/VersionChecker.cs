@@ -1,5 +1,4 @@
 ﻿using LmpCommon;
-using LmpUpdater.Github;
 using Server.Context;
 using Server.Log;
 using System;
@@ -15,7 +14,7 @@ namespace Server.Utilities
         {
             while (ServerContext.ServerRunning)
             {
-                LatestVersion = GithubUpdateChecker.GetLatestVersion();
+                LatestVersion = LmpUpdater.storm.UpdateChecker.GetLatestVersion();
 
                 //Sleep for 30 minutes...
                 await Task.Delay(30 * 60 * 1000);
@@ -28,7 +27,7 @@ namespace Server.Utilities
             {
                 if (LatestVersion > LmpVersioning.CurrentVersion)
                 {
-                    LunaLog.Warning($"There is a new version of LMP! Please download it! Current: {LmpVersioning.CurrentVersion} Latest: {LatestVersion}");
+                    LunaLog.Warning($"There is a new version of LMP! Current: {LmpVersioning.CurrentVersion} Latest: {LatestVersion} Please download the one for your OS from https://github.com/storm37000/LunaMultiplayer/releases");
                     if (LmpVersioning.IsCompatible(LatestVersion))
                     {
                         LunaLog.Debug("Your version is compatible with the latest version so you will still be listed in the master servers.");
