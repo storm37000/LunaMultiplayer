@@ -16,7 +16,7 @@
     <PackageReference Include="Lidgren.Network.Core2" Version="1.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Threading" Version="16.8.55" />
     <PackageReference Include="Noyacode.uHttpSharp" Version="1.0.1" />
-    <PackageReference Include="Open.NAT.Core" Version="2.1.0.5" />
+    <PackageReference Include="Open.Nat" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

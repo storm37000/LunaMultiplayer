@@ -85,6 +85,7 @@ namespace Server.Server
                                 break;
                             case NetIncomingMessageType.Data:
                                 ClientMessageReceiver.ReceiveCallback(client, msg);
+                                client.BytesReceived += (uint)msg.LengthBytes;
                                 break;
                             case NetIncomingMessageType.WarningMessage:
                                 LunaLog.Warning(msg.ReadString());

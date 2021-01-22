@@ -19,9 +19,9 @@ namespace Server.Command.Command
                 bytesSentTotal += client.BytesSent;
                 bytesReceivedTotal += client.BytesReceived;
                 LunaLog.Normal(
-                    $"Player '{client.PlayerName}', sent: {client.BytesSent}, received: {client.BytesReceived}");
+                    $"Server sent: {(float)client.BytesSent/1024} KB, received: {(float)client.BytesReceived/1024} KB from '{client.PlayerName}'");
             }
-            LunaLog.Normal($"Server sent: {bytesSentTotal}, received: {bytesReceivedTotal}");
+            LunaLog.Normal($"Server sent: {((float)bytesSentTotal/1024)/1024} MB, received: {((float)bytesReceivedTotal/1024)/1024} MB in total amongst above players.");
 
             return true;
         }
