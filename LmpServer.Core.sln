@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common projects", "Common p
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{09AEB353-B2BD-41FC-875E-AEB3BE4F27B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lidgren.Network", "Lidgren.Network\Lidgren.Network.csproj", "{CC6DAB4C-9251-4925-8E32-174836D76DD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{2D859364-C35F-47E1-A132-7333AC5D8271}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D859364-C35F-47E1-A132-7333AC5D8271}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D859364-C35F-47E1-A132-7333AC5D8271}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC6DAB4C-9251-4925-8E32-174836D76DD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC6DAB4C-9251-4925-8E32-174836D76DD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC6DAB4C-9251-4925-8E32-174836D76DD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC6DAB4C-9251-4925-8E32-174836D76DD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{486063DB-38EC-4096-B549-C4BCBBE6DE1F} = {09AEB353-B2BD-41FC-875E-AEB3BE4F27B5}
 		{004B7215-9FBA-41BE-AA3D-4E9A9D6B3E45} = {0330035F-F442-4F5F-8D00-85A2B7C6B874}
 		{2D859364-C35F-47E1-A132-7333AC5D8271} = {0330035F-F442-4F5F-8D00-85A2B7C6B874}
+		{CC6DAB4C-9251-4925-8E32-174836D76DD1} = {09AEB353-B2BD-41FC-875E-AEB3BE4F27B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {570DCDEC-0BF5-4429-91F3-0BE4E0F1221C}

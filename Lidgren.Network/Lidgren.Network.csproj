@@ -2,11 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Description>Luna Multiplayer Mod (updater)</Description>
-    <Product>LMP</Product>
-    <Copyright>Copyright © 2018</Copyright>
-    <Authors>Gabriel Vazquez</Authors>
-    <Version>0.27.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -14,9 +9,5 @@
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\LmpGlobal\LmpGlobal.csproj" />
-  </ItemGroup>
 
 </Project>

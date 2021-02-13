@@ -17,11 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lidgren.Network.Core2" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\CachedQuickLz\CachedQuickLz.csproj" />
+    <ProjectReference Include="..\Lidgren.Network\Lidgren.Network.csproj" />
     <ProjectReference Include="..\LmpGlobal\LmpGlobal.csproj" />
   </ItemGroup>
 
