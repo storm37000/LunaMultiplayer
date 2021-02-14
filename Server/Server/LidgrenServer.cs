@@ -59,23 +59,22 @@ namespace Server.Server
             Server.Start();
         }
 
-        public static async void StartReceivingMessages()
+        public static void StartReceivingMessages()
         {
-            try
+            while (ServerContext.ServerRunning)
             {
-                while (ServerContext.ServerRunning)
+                var msg = Server.WaitMessage(ServerContext.PlayerCount > 0 ? IntervalSettings.SettingsStore.SendReceiveThreadTickMs : int.MaxValue);
+                if (msg != null)
                 {
-                    var msg = Server.WaitMessage(ServerContext.PlayerCount > 0 ? IntervalSettings.SettingsStore.SendReceiveThreadTickMs : int.MaxValue);
-                    if (msg != null)
-                    {
+					try
+					{
                         var client = TryGetClient(msg);
                         switch (msg.MessageType)
                         {
                             case NetIncomingMessageType.ConnectionApproval:
                                 if (ServerContext.UsePassword)
                                 {
-                                    var password = msg.ReadString();
-                                    if (password != GeneralSettings.SettingsStore.Password)
+                                    if (msg.ReadString() != GeneralSettings.SettingsStore.Password)
                                     {
                                         msg.SenderConnection.Deny("Invalid password");
                                         break;
@@ -84,6 +83,7 @@ namespace Server.Server
                                 msg.SenderConnection.Approve();
                                 break;
                             case NetIncomingMessageType.Data:
+                                if (client == null) { break; }
                                 ClientMessageReceiver.ReceiveCallback(client, msg);
                                 client.BytesReceived += (uint)msg.LengthBytes;
                                 break;
@@ -110,27 +110,21 @@ namespace Server.Server
                                         ClientConnectionHandler.ConnectClient(msg.SenderConnection);
                                         break;
                                     case NetConnectionStatus.Disconnected:
-                                        var reason = msg.ReadString();
                                         if (client != null)
-                                            ClientConnectionHandler.DisconnectClient(client, reason);
+                                            ClientConnectionHandler.DisconnectClient(client, msg.ReadString());
                                         break;
                                 }
                                 break;
                             default:
-                                var details = msg.PeekString();
-                                LunaLog.Warning($"Unhandled Lidgren Message: {msg.MessageType.ToString().ToUpper()} -- {details}");
+                                LunaLog.Warning($"Unhandled Lidgren Message: {msg.MessageType} -- {msg.ReadString()}");
                                 break;
                         }
                     }
-//                    else
-//                    {
-//                        await Task.Delay(IntervalSettings.SettingsStore.SendReceiveThreadTickMs);
-//                    }
+                    catch (Exception e)
+                    {
+                        LunaLog.Fatal($"ERROR in thread receive! Details: {e}");
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                LunaLog.Fatal($"ERROR in thread receive! Details: {e}");
             }
         }
 

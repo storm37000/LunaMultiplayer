@@ -145,11 +145,10 @@ namespace Server.Message
                     protoMsg.VesselId = vesselId;
 
                     MessageQueuer.SendToClient<VesselSrvMsg>(client, protoMsg);
-                }
-            }
 
-            if (allVessels.Count > 0)
-                LunaLog.Debug($"Sending {client.PlayerName} {vesselsToSend.Count} vessels");
+                    LunaLog.Debug($"Sending {client.PlayerName} vessel {vesselId}");
+                }
+            }                
         }
 
         private static void HandleVesselCouple(ClientStructure client, VesselBaseMsgData message)
