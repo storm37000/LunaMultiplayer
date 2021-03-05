@@ -33,5 +33,7 @@ LunaConfigNode/bin/*
 LunaConfigNode/obj/*
 CachedQuickLz/bin/*
 CachedQuickLz/obj/*
+Lidgren.Network/bin/*
+Lidgren.Network/obj/*
 *.nupkg
 .idea
