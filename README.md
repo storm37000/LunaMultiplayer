@@ -44,7 +44,7 @@
 ---
 ### Running:
 
-Requires the latest version of the .net core 3.1 runtime for your OS [here](https://dotnet.microsoft.com/download/dotnet-core/3.1).<br>
+Requires the latest version of the .net core 3.1 **runtime** for your OS [here](https://dotnet.microsoft.com/download/dotnet-core/3.1).<br>
 
 ---
 ### Troubleshooting:
