@@ -82,31 +82,26 @@ namespace Server
 
                 LunaLog.Normal($"Starting '{GeneralSettings.SettingsStore.ServerName}' on UDP port {ConnectionSettings.SettingsStore.Port}" + (WebsiteSettings.SettingsStore.EnableWebsite ? " and TCP port " + WebsiteSettings.SettingsStore.Port : "") + " ...");
 
-                //LmpPortMapper.OpenLmpPort().Wait();
-                //LmpPortMapper.OpenWebPort().Wait();
+                LmpPortMapper.OpenPorts().Wait();
                 LidgrenServer.SetupLidgrenServer();
                 ServerContext.ServerRunning = true;
-                WebServer.StartWebServer();
+
+                TaskContainer.Add(LongRunTaskFactory.StartNew(LogThread.RunLogThread, CancellationTokenSrc.Token));
+                //TaskContainer.Add(LongRunTaskFactory.StartNew(LmpPortMapper.RefreshUpnpPort, CancellationTokenSrc.Token));
 
                 //Do not add the command handler thread to the TaskContainer as it's a blocking task
                 LongRunTaskFactory.StartNew(CommandHandler.ThreadMain, CancellationTokenSrc.Token);
 
-                TaskContainer.Add(LongRunTaskFactory.StartNew(WebServer.RefreshWebServerInformation, CancellationTokenSrc.Token));
-
-                TaskContainer.Add(LongRunTaskFactory.StartNew(LmpPortMapper.RefreshUpnpPort, CancellationTokenSrc.Token));
-                TaskContainer.Add(LongRunTaskFactory.StartNew(LogThread.RunLogThread, CancellationTokenSrc.Token));
-                //TaskContainer.Add(LongRunTaskFactory.StartNew(ClientMainThread.ThreadMain, CancellationTokenSrc.Token));
-
-                TaskContainer.Add(LongRunTaskFactory.StartNew(BackupSystem.PerformBackups, CancellationTokenSrc.Token));
-                TaskContainer.Add(LongRunTaskFactory.StartNew(NukeCommand.CheckTimer, CancellationTokenSrc.Token));
-                TaskContainer.Add(LongRunTaskFactory.StartNew(DekesslerCommand.CheckTimer, CancellationTokenSrc.Token));
-                //TaskContainer.Add();
                 LongRunTaskFactory.StartNew(LidgrenServer.StartReceivingMessages, CancellationTokenSrc.Token);
                 TaskContainer.Add(LongRunTaskFactory.StartNew(LidgrenMasterServer.RegisterWithMasterServer, CancellationTokenSrc.Token));
+                TaskContainer.Add(LongRunTaskFactory.StartNew(WebServer.RefreshWebServerInformation, CancellationTokenSrc.Token));
 
                 TaskContainer.Add(LongRunTaskFactory.StartNew(VersionChecker.RefreshLatestVersion, CancellationTokenSrc.Token));
                 TaskContainer.Add(LongRunTaskFactory.StartNew(VersionChecker.DisplayNewVersionMsg, CancellationTokenSrc.Token));
 
+                TaskContainer.Add(LongRunTaskFactory.StartNew(NukeCommand.CheckTimer, CancellationTokenSrc.Token));
+                TaskContainer.Add(LongRunTaskFactory.StartNew(DekesslerCommand.CheckTimer, CancellationTokenSrc.Token));
+                TaskContainer.Add(LongRunTaskFactory.StartNew(BackupSystem.PerformBackups, CancellationTokenSrc.Token));
                 TaskContainer.Add(LongRunTaskFactory.StartNew(GcSystem.PerformGarbageCollection, CancellationTokenSrc.Token));
 
                 LunaLog.Normal("All systems up and running. Поехали!");

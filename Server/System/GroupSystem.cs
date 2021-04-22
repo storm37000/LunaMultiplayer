@@ -8,19 +8,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Server.System
 {
     public static class GroupSystem
     {
-        /// <summary>
-        /// The serializer is not thread safe so we need a lock
-        /// </summary>
-        private static readonly object FileLock = new object();
-
         public static readonly string GroupsPath = Path.Combine(ServerContext.UniverseDirectory, "Groups");
-        private static readonly string GroupsFilePath = Path.Combine(GroupsPath, "Groups.xml");
+        public static readonly string GroupsFilePath = Path.Combine(GroupsPath, "Groups.xml");
 
         public static ConcurrentDictionary<string, Group> Groups { get; } = new ConcurrentDictionary<string, Group>();
 
@@ -41,7 +35,7 @@ namespace Server.System
                     msgData.Group = newGroup;
 
                     MessageQueuer.SendToAllClients<GroupSrvMsg>(msgData);
-                    Task.Run(() => SaveGroups());
+                    SaveGroups();
                 }
             }
         }
@@ -55,7 +49,7 @@ namespace Server.System
                 msgData.GroupName = groupName;
 
                 MessageQueuer.SendToAllClients<GroupSrvMsg>(msgData);
-                Task.Run(() => SaveGroups());
+                SaveGroups();
             }
         }
 
@@ -72,7 +66,7 @@ namespace Server.System
                         msgData.Group = group;
 
                         MessageQueuer.SendToAllClients<GroupSrvMsg>(msgData);
-                        Task.Run(() => SaveGroups());
+                        SaveGroups();
                     }
                 }
                 else
@@ -87,7 +81,7 @@ namespace Server.System
                             msgData.Group = group;
 
                             MessageQueuer.SendToAllClients<GroupSrvMsg>(msgData);
-                            Task.Run(() => SaveGroups());
+                            SaveGroups();
                         }
                     }
                 }
@@ -96,24 +90,20 @@ namespace Server.System
 
         public static void SaveGroups()
         {
-            lock (FileLock)
+            if (FileHandler.FolderExists(GroupsPath))
             {
-                if (FileHandler.FolderExists(GroupsPath))
-                    LunaXmlSerializer.WriteToXmlFile(Groups.Values.ToList(), GroupsFilePath);
+                FileHandler.WriteToFile(GroupsFilePath, LunaXmlSerializer.SerializeToXml(Groups.Values.ToList()));
             }
         }
 
         public static void LoadGroups()
         {
-            lock (FileLock)
+            if (FileHandler.FolderExists(GroupsFilePath))
             {
-                if (File.Exists(GroupsFilePath))
+                var values = LunaXmlSerializer.ReadXmlFromPath<List<Group>>(GroupsFilePath);
+                foreach (var value in values)
                 {
-                    var values = LunaXmlSerializer.ReadXmlFromPath<List<Group>>(GroupsFilePath);
-                    foreach (var value in values)
-                    {
-                        Groups.TryAdd(value.Name, value);
-                    }
+                    Groups.TryAdd(value.Name, value);
                 }
             }
         }

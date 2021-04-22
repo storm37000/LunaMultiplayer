@@ -16,17 +16,30 @@ namespace Server.Upnp
     {
         private static readonly int LifetimeInSeconds = (int)TimeSpan.FromMinutes(5).TotalSeconds;
         private static readonly AsyncLazy<NatDevice> Device = new AsyncLazy<NatDevice>(DiscoverDevice);
-
-        private static Mapping LmpPortMapping => new Mapping(Protocol.Udp, ConnectionSettings.SettingsStore.Port, ConnectionSettings.SettingsStore.Port,
-            LifetimeInSeconds, $"LMPServer {ConnectionSettings.SettingsStore.Port}");
-
-        private static Mapping LmpWebPortMapping => new Mapping(Protocol.Tcp, WebsiteSettings.SettingsStore.Port, WebsiteSettings.SettingsStore.Port,
-            LifetimeInSeconds, $"LMPServerWeb {WebsiteSettings.SettingsStore.Port}");
+        private static Mapping LmpPortMapping => new Mapping(Protocol.Udp, ConnectionSettings.SettingsStore.Port, ConnectionSettings.SettingsStore.Port, LifetimeInSeconds, $"LMPServer {ConnectionSettings.SettingsStore.Port}");
+        private static Mapping LmpWebPortMapping => new Mapping(Protocol.Tcp, WebsiteSettings.SettingsStore.Port, WebsiteSettings.SettingsStore.Port, LifetimeInSeconds, $"LMPServerWeb {WebsiteSettings.SettingsStore.Port}");
 
         private static async Task<NatDevice> DiscoverDevice()
         {
-            var nat = new NatDiscoverer();
-            return await nat.DiscoverDeviceAsync(PortMapper.Upnp, new CancellationTokenSource(ConnectionSettings.SettingsStore.UpnpMsTimeout));
+            NatDevice device;
+            try
+            {
+                return await new NatDiscoverer().DiscoverDeviceAsync(PortMapper.Upnp, new CancellationTokenSource(ConnectionSettings.SettingsStore.UpnpMsTimeout));
+            }
+            catch (Exception e)
+            {
+                LunaLog.Warning("Failed to use UPnP, trying NAT PMP... (" + e.Message + ")");
+                try
+                {
+                    return await new NatDiscoverer().DiscoverDeviceAsync(PortMapper.Pmp, new CancellationTokenSource(ConnectionSettings.SettingsStore.UpnpMsTimeout));
+                }
+                catch(Exception ex)
+                {
+                    LunaLog.Warning("Failed to use NAT PMP! (" + ex.Message + ")");
+                    return null;
+                }
+
+            }
         }
 
         static LmpPortMapper() => ExitEvent.ServerClosing += () =>
@@ -36,43 +49,37 @@ namespace Server.Upnp
         };
 
         /// <summary>
-        /// Opens the port set in the settings using UPnP. With a lifetime of <see cref="LifetimeInSeconds"/> seconds
+        /// Opens the all ports set in the settings using UPnP, PMP, or STUN(coming soon). With a lifetime of <see cref="LifetimeInSeconds"/> seconds
         /// </summary>
-        [DebuggerHidden]
-        public static async Task OpenLmpPort()
+        public static async Task OpenPorts()
         {
+            var device = await Device.GetValueAsync();
+
             if (ConnectionSettings.SettingsStore.Upnp)
             {
                 try
                 {
-                    var device = await Device.GetValueAsync();
+                    //var device = await Device.GetValueAsync();
                     await device.CreatePortMapAsync(LmpPortMapping);
-                    LunaLog.Debug($"UPnP opened game port: {ConnectionSettings.SettingsStore.Port} protocol: {LmpPortMapping.Protocol}");
+                    LunaLog.Debug($"Opened game port: {LmpPortMapping.PublicPort} protocol: {LmpPortMapping.Protocol}");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    LunaLog.Error($"UPnP failed to open game port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message. (" + e.Message + ")");
+                    LunaLog.Error($"Failed to open game port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message.");
                 }
             }
-        }
 
-        /// <summary>
-        /// Opens the website port set in the settings using UPnP. With a lifetime of <see cref="LifetimeInSeconds"/> seconds
-        /// </summary>
-        [DebuggerHidden]
-        public static async Task OpenWebPort()
-        {
             if (ConnectionSettings.SettingsStore.Upnp && WebsiteSettings.SettingsStore.EnableWebsite)
             {
                 try
                 {
-                    var device = await Device.GetValueAsync();
+                    //var device = await Device.GetValueAsync();
                     await device.CreatePortMapAsync(LmpWebPortMapping);
-                    LunaLog.Debug($"UPnP opened http port: {WebsiteSettings.SettingsStore.Port} protocol: {LmpWebPortMapping.Protocol}");
+                    LunaLog.Debug($"Opened http port: {LmpWebPortMapping.PublicPort} protocol: {LmpWebPortMapping.Protocol}");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    LunaLog.Error($"UPnP failed to open http port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message. (" + e.Message + ")");
+                    LunaLog.Error($"Failed to open http port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message.");
                 }
             }
         }
@@ -80,24 +87,24 @@ namespace Server.Upnp
         /// <summary>
         /// Refresh the UPnP port every 1 minute
         /// </summary>
-        public static async void RefreshUpnpPort()
-        {
-            if (ConnectionSettings.SettingsStore.Upnp)
-            {
-                while (ServerContext.ServerRunning)
-                {
-                    await OpenLmpPort();
-                    await OpenWebPort();
-                    await Task.Delay((int)TimeSpan.FromSeconds(60).TotalMilliseconds);
-                }
-            }
-        }
+//        public static async void RefreshUpnpPort()
+//        {
+//            if (ConnectionSettings.SettingsStore.Upnp)
+//            {
+//                while (ServerContext.ServerRunning)
+//                {
+//                    await OpenLmpPort();
+//                    await OpenWebPort();
+//                    await Task.Delay((int)TimeSpan.FromSeconds(60).TotalMilliseconds);
+//                }
+//            }
+//        }
 
         /// <summary>
         /// Closes the opened port using UPnP
         /// </summary>
         [DebuggerHidden]
-        public static async Task CloseLmpPort()
+        private static async Task CloseLmpPort()
         {
             if (ConnectionSettings.SettingsStore.Upnp && ServerContext.ServerRunning)
             {
@@ -105,7 +112,7 @@ namespace Server.Upnp
                 {
                     var device = await Device.GetValueAsync();
                     await device.DeletePortMapAsync(LmpPortMapping);
-                    LunaLog.Debug($"UPnP closed game port: {ConnectionSettings.SettingsStore.Port} protocol: {LmpPortMapping.Protocol}");
+                    LunaLog.Debug($"Closed game port: {ConnectionSettings.SettingsStore.Port} protocol: {LmpPortMapping.Protocol}");
                 }
                 catch (Exception)
                 {
@@ -118,7 +125,7 @@ namespace Server.Upnp
         /// Closes the opened web port using UPnP
         /// </summary>
         [DebuggerHidden]
-        public static async Task CloseWebPort()
+        private static async Task CloseWebPort()
         {
             if (ConnectionSettings.SettingsStore.Upnp && WebsiteSettings.SettingsStore.EnableWebsite && ServerContext.ServerRunning)
             {
@@ -126,7 +133,7 @@ namespace Server.Upnp
                 {
                     var device = await Device.GetValueAsync();
                     await device.DeletePortMapAsync(LmpWebPortMapping);
-                    LunaLog.Debug($"UPnP closed http port: {WebsiteSettings.SettingsStore.Port} protocol: {LmpWebPortMapping.Protocol}");
+                    LunaLog.Debug($"Closed http port: {WebsiteSettings.SettingsStore.Port} protocol: {LmpWebPortMapping.Protocol}");
                 }
                 catch (Exception)
                 {
@@ -138,10 +145,10 @@ namespace Server.Upnp
         /// <summary>
         /// Gets external IP using UPnP
         /// </summary>
-        public static async Task<IPAddress> GetExternalIp()
-        {
-            var device = await Device.GetValueAsync();
-            return await device.GetExternalIPAsync();
-        }
+//        public static async Task<IPAddress> GetExternalIp()
+//        {
+//            var device = await Device.GetValueAsync();
+//            return await device.GetExternalIPAsync();
+//        }
     }
 }

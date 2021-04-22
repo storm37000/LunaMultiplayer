@@ -10,9 +10,9 @@ using Server.Plugin;
 
 namespace Server.Server
 {
-    public class MessageReceiver
+    public static class MessageReceiver
     {
-        public void ReceiveCallback(ClientStructure client, NetIncomingMessage msg)
+        public static void ReceiveCallback(ClientStructure client, NetIncomingMessage msg)
         {
             if (client == null || msg.LengthBytes <= 1) return;
 

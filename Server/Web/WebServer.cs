@@ -30,40 +30,37 @@ namespace Server.Web
         /// <summary>
         /// Starts the web server
         /// </summary>
-        public static void StartWebServer()
+        private static void StartWebServer()
         {
-            if (WebsiteSettings.SettingsStore.EnableWebsite)
+            try
             {
-                try
+                if (!LunaNetUtils.IsTcpPortInUse(WebsiteSettings.SettingsStore.Port))
                 {
-                    if (!LunaNetUtils.IsTcpPortInUse(WebsiteSettings.SettingsStore.Port))
-                    {
-                        Server = new HttpServer(new HttpRequestProvider());
-                        ServerInformation = new ServerInformation();
-                        Server.Use(new TcpListenerAdapter(new TcpListener(IPAddress.Any, WebsiteSettings.SettingsStore.Port)));
-                        Server.Use(new ExceptionHandler());
-                        Server.Use(new CompressionHandler(DeflateCompressor.Default, GZipCompressor.Default));
-                        Server.Use(new FileHandler());
-                        Server.Use(new HttpRouter().With(string.Empty, new RestHandler<ServerInformation>(new ServerInformationRestController(), JsonResponseProvider.Default)));
-                        Server.Start();
-                    }
-                    else
-                    {
-                        LunaLog.Error("Could not start web server. Port is already in use.");
-                        LunaLog.Info("You can change the web server settings inside 'Config/WebsiteSettings.xml'");
-                    }
+                    Server = new HttpServer(new HttpRequestProvider());
+                    ServerInformation = new ServerInformation();
+                    Server.Use(new TcpListenerAdapter(new TcpListener(IPAddress.Any, WebsiteSettings.SettingsStore.Port)));
+                    Server.Use(new ExceptionHandler());
+                    Server.Use(new CompressionHandler(DeflateCompressor.Default, GZipCompressor.Default));
+                    Server.Use(new FileHandler());
+                    Server.Use(new HttpRouter().With(string.Empty, new RestHandler<ServerInformation>(new ServerInformationRestController(), JsonResponseProvider.Default)));
+                    Server.Start();
                 }
-                catch (Exception e)
+                else
                 {
-                    LunaLog.Error($"Could not start web server. Details: {e}");
+                    LunaLog.Error("Could not start web server. Port is already in use.");
+                    LunaLog.Info("You can change the web server settings inside 'Config/WebsiteSettings.xml'");
                 }
+            }
+            catch (Exception e)
+            {
+                LunaLog.Error($"Could not start web server. Details: {e}");
             }
         }
 
         /// <summary>
         /// Starts the web server
         /// </summary>
-        public static void StopWebServer()
+        private static void StopWebServer()
         {
             if (WebsiteSettings.SettingsStore.EnableWebsite)
             {
@@ -85,6 +82,7 @@ namespace Server.Web
         {
             if (WebsiteSettings.SettingsStore.EnableWebsite)
             {
+                if (ServerInformation == null) { StartWebServer(); }
                 while (ServerContext.ServerRunning)
                 {
                     ServerInformation.Refresh();

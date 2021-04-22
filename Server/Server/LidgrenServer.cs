@@ -13,14 +13,13 @@ using System.Net;
 
 namespace Server.Server
 {
-    public class LidgrenServer
+    public static class LidgrenServer
     {
         public static NetServer Server { get; private set; }
-        public static MessageReceiver ClientMessageReceiver { get; set; } = new MessageReceiver();
 
         public static void SetupLidgrenServer()
         {
-            //ServerContext.Config.LocalAddress = IPAddress.IPv6Any;
+            ServerContext.Config.LocalAddress = IPAddress.IPv6Any;
             ServerContext.Config.Port = ConnectionSettings.SettingsStore.Port;
             ServerContext.Config.AutoExpandMTU = ConnectionSettings.SettingsStore.AutoExpandMtu;
             ServerContext.Config.MaximumTransmissionUnit = ConnectionSettings.SettingsStore.MaximumTransmissionUnit;
@@ -66,9 +65,13 @@ namespace Server.Server
                 var msg = Server.WaitMessage(ServerContext.PlayerCount > 0 ? IntervalSettings.SettingsStore.SendReceiveThreadTickMs : int.MaxValue);
                 if (msg != null)
                 {
-					try
-					{
-                        var client = TryGetClient(msg);
+                    try
+                    {
+                        ClientStructure client = null;
+                        if (msg.SenderConnection != null)
+                        {
+                            ServerContext.Clients.TryGetValue(msg.SenderConnection.RemoteEndPoint, out client);
+                        }
                         switch (msg.MessageType)
                         {
                             case NetIncomingMessageType.ConnectionApproval:
@@ -83,8 +86,8 @@ namespace Server.Server
                                 msg.SenderConnection.Approve();
                                 break;
                             case NetIncomingMessageType.Data:
+                                MessageReceiver.ReceiveCallback(client, msg);
                                 if (client == null) { break; }
-                                ClientMessageReceiver.ReceiveCallback(client, msg);
                                 client.BytesReceived += (uint)msg.LengthBytes;
                                 break;
                             case NetIncomingMessageType.WarningMessage:
@@ -122,20 +125,10 @@ namespace Server.Server
                     }
                     catch (Exception e)
                     {
-                        LunaLog.Fatal($"ERROR in thread receive! Details: {e}");
+                        LunaLog.Error($"ERROR in networking thread! Details: {e}");
                     }
                 }
             }
-        }
-
-        private static ClientStructure TryGetClient(NetIncomingMessage msg)
-        {
-            if (msg.SenderConnection != null)
-            {
-                ServerContext.Clients.TryGetValue(msg.SenderConnection.RemoteEndPoint, out var client);
-                return client;
-            }
-            return null;
         }
 
         public static void SendMessageToClient(ClientStructure client, IServerMessageBase message)
@@ -144,14 +137,19 @@ namespace Server.Server
 
             message.Data.SentTime = LunaNetworkTime.UtcNow.Ticks;
             message.Serialize(outmsg);
-
             client.LastSendTime = ServerContext.ServerClock.ElapsedMilliseconds;
             client.BytesSent += (uint)outmsg.LengthBytes;
+            try
+            {
+                Server.SendMessage(outmsg, client.Connection, message.NetDeliveryMethod, message.Channel);
+            }
+            catch (Exception e)
+            {
+                ClientException.HandleDisconnectException("Send network message error: ", client, e);
+                return;
+            }
 
-            Server.SendMessage(outmsg, client.Connection, message.NetDeliveryMethod, message.Channel);
-
-            //Force send of packets
-            Server.FlushSendQueue();
+            Plugin.LmpPluginHandler.FireOnMessageSent(client, message);
         }
     }
 }

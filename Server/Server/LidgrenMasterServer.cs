@@ -70,15 +70,13 @@ namespace Server.Server
         {
             var msg = ServerContext.MasterServerMessageFactory.CreateNew<MainMstSrvMsg>(msgData);
             msg.Data.SentTime = LunaNetworkTime.UtcNow.Ticks;
-
+            var outMsg = LidgrenServer.Server.CreateMessage(msg.GetMessageSize());
+            msg.Serialize(outMsg);
             try
             {
-                var outMsg = LidgrenServer.Server.CreateMessage(msg.GetMessageSize());
-                msg.Serialize(outMsg);
                 LidgrenServer.Server.SendUnconnectedMessage(outMsg, masterServer);
-
                 //Force send of packets
-                LidgrenServer.Server.FlushSendQueue();
+                //LidgrenServer.Server.FlushSendQueue();
             }
             catch (Exception)
             {

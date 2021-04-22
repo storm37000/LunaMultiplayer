@@ -15,7 +15,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Graphics = System.Drawing.Graphics;
 
 namespace Server.System
@@ -33,49 +32,46 @@ namespace Server.System
         /// </summary>
         public static void SaveScreenshot(ClientStructure client, ScreenshotDataMsgData data)
         {
-            Task.Run(() =>
+            var playerFolder = Path.Combine(ScreenshotPath, client.PlayerName);
+            if (!FileHandler.FolderExists(playerFolder))
             {
-                var playerFolder = Path.Combine(ScreenshotPath, client.PlayerName);
-                if (!FileHandler.FolderExists(playerFolder))
-                {
-                    FileHandler.FolderCreate(playerFolder);
-                }
+                FileHandler.FolderCreate(playerFolder);
+            }
 
-                var lastTime = LastUploadRequest.GetOrAdd(client.PlayerName, DateTime.MinValue);
-                if (DateTime.Now - lastTime > TimeSpan.FromMilliseconds(ScreenshotSettings.SettingsStore.MinScreenshotIntervalMs))
+            var lastTime = LastUploadRequest.GetOrAdd(client.PlayerName, DateTime.MinValue);
+            if (DateTime.Now - lastTime > TimeSpan.FromMilliseconds(ScreenshotSettings.SettingsStore.MinScreenshotIntervalMs))
+            {
+                LastUploadRequest.AddOrUpdate(client.PlayerName, DateTime.Now, (key, existingVal) => DateTime.Now);
+                if (data.Screenshot.DateTaken == 0) data.Screenshot.DateTaken = LunaNetworkTime.UtcNow.ToBinary();
+                var fileName = $"{data.Screenshot.DateTaken}.png";
+                var fullPath = Path.Combine(playerFolder, fileName);
+                if (!FileHandler.FileExists(fullPath))
                 {
-                    LastUploadRequest.AddOrUpdate(client.PlayerName, DateTime.Now, (key, existingVal) => DateTime.Now);
-                    if (data.Screenshot.DateTaken == 0) data.Screenshot.DateTaken = LunaNetworkTime.UtcNow.ToBinary();
-                    var fileName = $"{data.Screenshot.DateTaken}.png";
-                    var fullPath = Path.Combine(playerFolder, fileName);
-                    if (!FileHandler.FileExists(fullPath))
+                    LunaLog.Normal($"Saving screenshot {fileName} ({ByteSize.FromBytes(data.Screenshot.NumBytes).KiloBytes}{ByteSize.KiloByteSymbol}) from: {client.PlayerName}.");
+                    FileHandler.CreateFile(fullPath, data.Screenshot.Data, data.Screenshot.NumBytes);
+                    if (Common.PlatformIsWindows())
                     {
-                        LunaLog.Normal($"Saving screenshot {fileName} ({ByteSize.FromBytes(data.Screenshot.NumBytes).KiloBytes}{ByteSize.KiloByteSymbol}) from: {client.PlayerName}.");
-                        FileHandler.CreateFile(fullPath, data.Screenshot.Data, data.Screenshot.NumBytes);
-                        if (Common.PlatformIsWindows())
-                        {
-                            CreateMiniature(fullPath);
-                        }
-                        SendNotification(client.PlayerName);
+                        CreateMiniature(fullPath);
                     }
-                    else
-                    {
-                        LunaLog.Warning($"{client.PlayerName} tried to overwrite a screnshot!");
-                        return;
-                    }
+                    SendNotification(client);
                 }
                 else
                 {
-                    LunaLog.Warning($"{client.PlayerName} is sending screenshots too fast!");
+                    LunaLog.Warning($"{client.PlayerName} tried to overwrite a screnshot!");
                     return;
                 }
+            }
+            else
+            {
+                LunaLog.Warning($"{client.PlayerName} is sending screenshots too fast!");
+                return;
+            }
 
-                //Remove oldest screenshots if the player has too many
-                RemovePlayerOldestScreenshots(playerFolder);
+            //Remove oldest screenshots if the player has too many
+            RemovePlayerOldestScreenshots(playerFolder);
 
-                //Checks if we are above the max folders limit
-                CheckMaxFolders();
-            });
+            //Checks if we are above the max folders limit
+            CheckMaxFolders();
         }
 
         /// <summary>
@@ -83,16 +79,28 @@ namespace Server.System
         /// </summary>
         public static void SendScreenshotFolders(ClientStructure client)
         {
-            Task.Run(() =>
-            {
-                var msgData = ServerContext.ServerMessageFactory.CreateNewMessageData<ScreenshotFoldersReplyMsgData>();
-                msgData.Folders = FileHandler.GetDirectoriesInPath(ScreenshotPath).Select(d => new DirectoryInfo(d).Name).ToArray();
-                msgData.NumFolders = msgData.Folders.Length;
+            var msgData = ServerContext.ServerMessageFactory.CreateNewMessageData<ScreenshotFoldersReplyMsgData>();
+            msgData.Folders = FileHandler.GetDirectoriesInPath(ScreenshotPath).Select(d => new DirectoryInfo(d).Name).ToArray();
+            msgData.NumFolders = msgData.Folders.Length;
 
-                MessageQueuer.SendToClient<ScreenshotSrvMsg>(client, msgData);
-                if (msgData.NumFolders > 0)
-                    LunaLog.Debug($"Sending {msgData.NumFolders} screenshot folders to: {client.PlayerName}");
-            });
+            MessageQueuer.SendToClient<ScreenshotSrvMsg>(client, msgData);
+            if (msgData.NumFolders > 0)
+            {
+                LunaLog.Debug($"Sending {msgData.NumFolders} screenshot folders to: {client.PlayerName}");
+            }
+        }
+
+        private static bool thumbnail_handler(string f)
+		{
+            f = Path.GetFileNameWithoutExtension(f);
+            if (Common.PlatformIsWindows())
+            {
+                return f.StartsWith("small_");
+			}
+			else
+			{
+                return !f.StartsWith("small_");
+            }
         }
 
         /// <summary>
@@ -100,43 +108,40 @@ namespace Server.System
         /// </summary>
         public static void SendScreenshotList(ClientStructure client, ScreenshotListRequestMsgData data)
         {
-            Task.Run(() =>
+            var screenshots = new List<ScreenshotInfo>();
+
+            foreach (var file in FileHandler.GetFilesInPath(Path.Combine(ScreenshotPath, data.FolderName)).Where(f => thumbnail_handler(f)))
             {
-                var screenshots = new List<ScreenshotInfo>();
-
-                foreach (var file in FileHandler.GetFilesInPath(Path.Combine(ScreenshotPath, data.FolderName)).Where(f => !f.StartsWith("small_")))
+                if (long.TryParse(Path.GetFileNameWithoutExtension(file).Replace("small_", string.Empty), out var dateTaken))
                 {
-                    if (long.TryParse(Path.GetFileNameWithoutExtension(file), out var dateTaken))
-                    {
-                        if (data.AlreadyOwnedPhotoIds.Contains(dateTaken))
-                            continue;
+                    if (data.AlreadyOwnedPhotoIds.Contains(dateTaken))
+                        continue;
 
-                        var contents = FileHandler.ReadFile(file);
-                        LunaLog.Debug("IMG: " + LunaMath.UShortFromBytes(contents[18], contents[19]) + " X " + LunaMath.UShortFromBytes(contents[22], contents[23]));
-                        screenshots.Add(new ScreenshotInfo
-                        {
-                            Data = contents,
-                            DateTaken = dateTaken,
-                            NumBytes = contents.Length,
-                            Height = LunaMath.UShortFromBytes(contents[18], contents[19]),
-                            Width = LunaMath.UShortFromBytes(contents[22], contents[23]),
-                            FolderName = data.FolderName,
-                        });
-                    }
-                    else
+                    var contents = FileHandler.ReadFile(file);
+                    LunaLog.Debug("IMG: " + LunaMath.UShortFromBytes(contents[18], contents[19]) + " X " + LunaMath.UShortFromBytes(contents[22], contents[23]));
+                    screenshots.Add(new ScreenshotInfo
                     {
-                        LunaLog.Error("Failed to parse data on screenshot: " + file);
-                    }
+                        Data = contents,
+                        DateTaken = dateTaken,
+                        NumBytes = contents.Length,
+                        Height = LunaMath.UShortFromBytes(contents[18], contents[19]),
+                        Width = LunaMath.UShortFromBytes(contents[22], contents[23]),
+                        FolderName = data.FolderName,
+                    });
                 }
+                else
+                {
+                    LunaLog.Error("Failed to parse data on screenshot: " + file);
+                }
+            }
 
-                var msgData = ServerContext.ServerMessageFactory.CreateNewMessageData<ScreenshotListReplyMsgData>();
-                msgData.FolderName = data.FolderName;
-                msgData.Screenshots = screenshots.ToArray();
-                msgData.NumScreenshots = screenshots.Count;
+            var msgData = ServerContext.ServerMessageFactory.CreateNewMessageData<ScreenshotListReplyMsgData>();
+            msgData.FolderName = data.FolderName;
+            msgData.Screenshots = screenshots.ToArray();
+            msgData.NumScreenshots = screenshots.Count;
 
-                LunaLog.Debug($"Sending {msgData.NumScreenshots} ({data.FolderName}) screenshots to: {client.PlayerName}");
-                MessageQueuer.SendToClient<ScreenshotSrvMsg>(client, msgData);
-            });
+            LunaLog.Debug($"Sending {msgData.NumScreenshots} ({data.FolderName}) screenshots to: {client.PlayerName}");
+            MessageQueuer.SendToClient<ScreenshotSrvMsg>(client, msgData);
         }
 
         /// <summary>
@@ -144,24 +149,21 @@ namespace Server.System
         /// </summary>
         public static void SendScreenshot(ClientStructure client, ScreenshotDownloadRequestMsgData data)
         {
-            Task.Run(() =>
+            var file = Path.Combine(ScreenshotPath, data.FolderName, $"{data.DateTaken}.png");
+            if (FileHandler.FileExists(file))
             {
-                var file = Path.Combine(ScreenshotPath, data.FolderName, $"{data.DateTaken}.png");
-                if (FileHandler.FileExists(file))
-                {
-                    var contents = FileHandler.ReadFile(file);
-                    var msgData = ServerContext.ServerMessageFactory.CreateNewMessageData<ScreenshotDataMsgData>();
-                    msgData.Screenshot.DateTaken = data.DateTaken;
-                    msgData.Screenshot.Data = contents;
-                    msgData.Screenshot.NumBytes = msgData.Screenshot.Data.Length;
-                    msgData.Screenshot.Height = LunaMath.UShortFromBytes(contents[18], contents[19]);
-                    msgData.Screenshot.Width = LunaMath.UShortFromBytes(contents[22], contents[23]);
-                    msgData.Screenshot.FolderName = data.FolderName;
+                var contents = FileHandler.ReadFile(file);
+                var msgData = ServerContext.ServerMessageFactory.CreateNewMessageData<ScreenshotDataMsgData>();
+                msgData.Screenshot.DateTaken = data.DateTaken;
+                msgData.Screenshot.Data = contents;
+                msgData.Screenshot.NumBytes = msgData.Screenshot.Data.Length;
+                msgData.Screenshot.Height = LunaMath.UShortFromBytes(contents[18], contents[19]);
+                msgData.Screenshot.Width = LunaMath.UShortFromBytes(contents[22], contents[23]);
+                msgData.Screenshot.FolderName = data.FolderName;
 
-                    LunaLog.Debug($"Sending screenshot ({ByteSize.FromBytes(msgData.Screenshot.NumBytes).KiloBytes}{ByteSize.KiloByteSymbol}): {data.DateTaken} to: {client.PlayerName}.");
-                    MessageQueuer.SendToClient<ScreenshotSrvMsg>(client, msgData);
-                }
-            });
+                LunaLog.Debug($"Sending screenshot ({ByteSize.FromBytes(msgData.Screenshot.NumBytes).KiloBytes}{ByteSize.KiloByteSymbol}): {data.DateTaken} to: {client.PlayerName}.");
+                MessageQueuer.SendToClient<ScreenshotSrvMsg>(client, msgData);
+            }
         }
 
         #endregion
@@ -171,12 +173,12 @@ namespace Server.System
         /// <summary>
         /// Sends a notification of new screenshot to all players
         /// </summary>
-        private static void SendNotification(string folderName)
+        private static void SendNotification(ClientStructure client)
         {
             var msgData = ServerContext.ServerMessageFactory.CreateNewMessageData<ScreenshotNotificationMsgData>();
-            msgData.FolderName = folderName;
+            msgData.FolderName = client.PlayerName;
 
-            MessageQueuer.SendToAllClients<ScreenshotSrvMsg>(msgData);
+            MessageQueuer.RelayMessage<ScreenshotSrvMsg>(client,msgData);
         }
 
         /// <summary>

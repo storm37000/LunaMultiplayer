@@ -36,6 +36,9 @@ namespace Server.Context
             ReceiveBufferSize = 1500000, //500kb
             DefaultOutgoingMessageCapacity = 500000, //500kb
             SuppressUnreliableUnorderedAcks = true,
+            AutoFlushSendQueue = true,
+            UseMessageRecycling = true,
+            DualStack = true,
         };
 
         public static MasterServerMessageFactory MasterServerMessageFactory { get; } = new MasterServerMessageFactory();

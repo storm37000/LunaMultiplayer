@@ -96,7 +96,7 @@ namespace Server.Server
         {
             if (msg?.Data == null) return;
 
-            client?.SendMessage(msg);
+            LidgrenServer.SendMessageToClient(client, msg);
         }
 
         private static T GenerateMessage<T>(IMessageData data) where T : class, IServerMessageBase

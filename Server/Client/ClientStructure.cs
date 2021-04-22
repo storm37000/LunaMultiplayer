@@ -1,11 +1,7 @@
 ﻿using Lidgren.Network;
 using LmpCommon;
 using LmpCommon.Enums;
-using LmpCommon.Message.Interface;
 using Server.Context;
-using Server.Plugin;
-using Server.Server;
-using System;
 using System.Net;
 
 namespace Server.Client
@@ -46,21 +42,6 @@ namespace Server.Client
         public override int GetHashCode()
         {
             return Endpoint?.GetHashCode() ?? 0;
-        }
-
-        public void SendMessage(IServerMessageBase msg)
-        {
-            try
-            {
-                LidgrenServer.SendMessageToClient(this, msg);
-            }
-            catch (Exception e)
-            {
-                ClientException.HandleDisconnectException("Send network message error: ", this, e);
-                return;
-            }
-
-            LmpPluginHandler.FireOnMessageSent(this, msg);
         }
     }
 }
