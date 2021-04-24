@@ -70,6 +70,7 @@ namespace Server.Server
         {
             var msg = ServerContext.MasterServerMessageFactory.CreateNew<MainMstSrvMsg>(msgData);
             msg.Data.SentTime = LunaNetworkTime.UtcNow.Ticks;
+            //msg.NetDeliveryMethod = Lidgren.Network.NetDeliveryMethod.Unreliable;
             var outMsg = LidgrenServer.Server.CreateMessage(msg.GetMessageSize());
             msg.Serialize(outMsg);
             try

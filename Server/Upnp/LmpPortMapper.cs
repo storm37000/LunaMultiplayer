@@ -53,13 +53,11 @@ namespace Server.Upnp
         /// </summary>
         public static async Task OpenPorts()
         {
-            var device = await Device.GetValueAsync();
-
             if (ConnectionSettings.SettingsStore.Upnp)
             {
+                var device = await Device.GetValueAsync();
                 try
                 {
-                    //var device = await Device.GetValueAsync();
                     await device.CreatePortMapAsync(LmpPortMapping);
                     LunaLog.Debug($"Opened game port: {LmpPortMapping.PublicPort} protocol: {LmpPortMapping.Protocol}");
                 }
@@ -67,19 +65,17 @@ namespace Server.Upnp
                 {
                     LunaLog.Error($"Failed to open game port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message.");
                 }
-            }
-
-            if (ConnectionSettings.SettingsStore.Upnp && WebsiteSettings.SettingsStore.EnableWebsite)
-            {
-                try
+                if (WebsiteSettings.SettingsStore.EnableWebsite)
                 {
-                    //var device = await Device.GetValueAsync();
-                    await device.CreatePortMapAsync(LmpWebPortMapping);
-                    LunaLog.Debug($"Opened http port: {LmpWebPortMapping.PublicPort} protocol: {LmpWebPortMapping.Protocol}");
-                }
-                catch (Exception)
-                {
-                    LunaLog.Error($"Failed to open http port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message.");
+                    try
+                    {
+                        await device.CreatePortMapAsync(LmpWebPortMapping);
+                        LunaLog.Debug($"Opened http port: {LmpWebPortMapping.PublicPort} protocol: {LmpWebPortMapping.Protocol}");
+                    }
+                    catch (Exception)
+                    {
+                        LunaLog.Error($"Failed to open http port, manual port forwarding may be required if players can't join! Your router likely doesnt have UPnP enabled! Disable UPnp in ConnectionSettings.xml to get rid of this message.");
+                    }
                 }
             }
         }

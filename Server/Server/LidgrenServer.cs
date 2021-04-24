@@ -133,6 +133,8 @@ namespace Server.Server
 
         public static void SendMessageToClient(ClientStructure client, IServerMessageBase message)
         {
+            //var msg = ServerContext.ServerMessageFactory.CreateNew<NetOutgoingMessage>(message.Data);
+
             var outmsg = Server.CreateMessage(message.GetMessageSize());
 
             message.Data.SentTime = LunaNetworkTime.UtcNow.Ticks;
