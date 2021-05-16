@@ -44,7 +44,11 @@
 ---
 ### Running:
 
-Requires the latest version of the .net core 3.1 **runtime** for your OS [here](https://dotnet.microsoft.com/download/dotnet-core/3.1).<br>
+Requires the latest version of the .net core 3.1 **runtime** for your OS;<br>
+[Windows](https://dotnet.microsoft.com/download/dotnet-core/3.1)<br>
+[Ubuntu](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu)<br>
+[Debian](https://docs.microsoft.com/en-us/dotnet/core/install/linux-debian)<br>
+[Others](https://docs.microsoft.com/en-us/dotnet/core/install/linux)<br>
 
 ---
 ### Troubleshooting:
